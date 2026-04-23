@@ -1,10 +1,26 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Stance, SourceType } from '@/types';
 
 export interface GeminiImageResult {
   aiProbability: number;
   detectedModel: string;
   reasoning: string[];
   confidence: number;
+}
+
+export interface GeminiTextResult {
+  score: number;
+  confidence: number;
+  reasoning: string[];
+  references: Array<{
+    sourceName: string;
+    url: string;
+    stance: Stance;
+    excerpt: string;
+    sourceType: SourceType;
+    credibility: number;
+    publishedAt: string | null;
+  }>;
 }
 
 const FALLBACK: GeminiImageResult = {
@@ -30,6 +46,87 @@ Analysis criteria:
 - Examine background coherence and depth consistency
 - All reasoning must be in Thai language
 - If unsure, set aiProbability to 50 and confidence to 40`;
+
+const TEXT_PROMPT = `You are a fake news detection expert. Analyze the following claim and assess its credibility.
+
+Respond ONLY in valid JSON with this exact structure:
+{
+  "score": <number 0-100, where 0=definitely fake, 100=definitely true>,
+  "confidence": <number 0-100>,
+  "reasoning": ["<bullet 1>", "<bullet 2>", "<bullet 3>"],
+  "references": [
+    {
+      "sourceName": "<source organization name>",
+      "url": "<real URL if you are certain it exists, otherwise empty string>",
+      "stance": "<SUPPORTING|OPPOSING|NEUTRAL>",
+      "excerpt": "<short excerpt about this claim>",
+      "sourceType": "<TRUSTED_MEDIA|FACT_CHECKER|ACADEMIC|GOV|UNKNOWN>",
+      "credibility": <number 0-100>,
+      "publishedAt": "<YYYY-MM-DD or null>"
+    }
+  ]
+}
+
+Guidelines:
+- score: 0-20 = dangerous misinformation, 21-40 = suspicious, 41-60 = uncertain, 61-80 = likely true, 81-100 = verified
+- reasoning: 3-5 bullets in the same language as the input claim
+- references: 2-4 relevant real-world sources that would fact-check this claim. Only include URLs you are highly confident exist; otherwise use empty string ""
+- If the claim is clearly false/dangerous misinformation, set score <= 30
+- If the claim cannot be verified, set score 40-60 and confidence <= 50`;
+
+export async function analyzeTextForFakeNews(query: string): Promise<GeminiTextResult | null> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.error('analyzeTextForFakeNews: GEMINI_API_KEY not set');
+    return null;
+  }
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+    console.log('analyzeTextForFakeNews: sending request to Gemini for query:', query.slice(0, 80));
+    const result = await model.generateContent([
+      TEXT_PROMPT,
+      `Claim to analyze: "${query}"`,
+    ]);
+
+    const text = result.response.text().trim();
+    console.log('analyzeTextForFakeNews: raw Gemini response:', text.slice(0, 200));
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('analyzeTextForFakeNews: no JSON in response');
+      return null;
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]) as GeminiTextResult;
+    const validStances = new Set<string>([Stance.SUPPORTING, Stance.OPPOSING, Stance.NEUTRAL]);
+    const validSourceTypes = new Set<string>([
+      SourceType.TRUSTED_MEDIA, SourceType.FACT_CHECKER,
+      SourceType.ACADEMIC, SourceType.GOV, SourceType.UNKNOWN,
+    ]);
+
+    return {
+      score: Math.max(0, Math.min(100, Number(parsed.score) || 50)),
+      confidence: Math.max(0, Math.min(100, Number(parsed.confidence) || 50)),
+      reasoning: Array.isArray(parsed.reasoning) ? parsed.reasoning.map(String) : [],
+      references: Array.isArray(parsed.references)
+        ? parsed.references.map((r) => ({
+            sourceName: String(r.sourceName || 'Unknown'),
+            url: String(r.url || ''),
+            stance: validStances.has(r.stance) ? (r.stance as Stance) : Stance.NEUTRAL,
+            excerpt: String(r.excerpt || ''),
+            sourceType: validSourceTypes.has(r.sourceType) ? (r.sourceType as SourceType) : SourceType.UNKNOWN,
+            credibility: Math.max(0, Math.min(100, Number(r.credibility) || 50)),
+            publishedAt: r.publishedAt ? String(r.publishedAt) : null,
+          }))
+        : [],
+    };
+  } catch (e) {
+    console.error('Gemini text analysis error:', e);
+    return null;
+  }
+}
 
 export async function analyzeImageForAI(
   base64: string,

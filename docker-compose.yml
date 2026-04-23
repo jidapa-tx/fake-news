@@ -15,7 +15,7 @@ services:
     command: >
       sh -c "./node_modules/.bin/prisma migrate deploy &&
              ./node_modules/.bin/prisma db seed &&
-             node server.js"
+             ./node_modules/.bin/next start"
 
   db:
     image: postgres:15-alpine

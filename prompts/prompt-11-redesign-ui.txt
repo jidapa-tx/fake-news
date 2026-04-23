@@ -1,0 +1,246 @@
+Redesign all HTML prototypes in `ui-prototypes/` using the UI/UX Pro Max skill principles (https://github.com/nextlevelbuilder/ui-ux-pro-max-skill).
+
+This app is a Thai civic/government fact-checking tool. Apply the Accessible & Ethical + Minimalism design system as defined in that skill for government/news-media product types.
+
+---
+
+## Design System (Derived from UI/UX Pro Max — Government/News Category)
+
+### Style
+- Primary style: Minimalism + Accessible & Ethical
+- Supplemental: subtle glassmorphism for cards only (frosted panel, not full-page)
+- No decorative animation — every motion must express cause/effect
+- Professional news tone: trust-building, not playful
+
+### Color Tokens (replace existing)
+- `--color-primary`: #1D4ED8 (trust blue, WCAG-AAA on white)
+- `--color-primary-hover`: #1E40AF
+- `--color-danger`: #B91C1C (verified-fake — not pure red, more muted)
+- `--color-verified`: #047857 (verified-true — earthy green, not bright)
+- `--color-warning`: #B45309 (uncertain — amber, desaturated)
+- `--color-neutral`: #6B7280
+- `--color-surface`: #FFFFFF
+- `--color-surface-secondary`: #F8FAFC
+- `--color-border`: #E2E8F0
+- `--color-text-primary`: #0F172A
+- `--color-text-secondary`: #475569
+- Dark mode (prefers-color-scheme: dark):
+  - bg: #0A0F1E, surface: #111827, surface-secondary: #1E293B
+  - border: #1E293B, text-primary: #F1F5F9, text-secondary: #94A3B8
+  - All palette colors shift to desaturated/lighter tonal variants (not inverted)
+
+### Typography (Google Fonts CDN — keep existing IBM Plex Sans Thai)
+- h1: 600, 2rem (32px), line-height 1.3
+- h2: 600, 1.5rem (24px), line-height 1.35
+- h3: 500, 1.125rem (18px), line-height 1.4
+- body: 400, 1rem (16px), line-height 1.6, max 70ch per line
+- label/meta: 500, 0.875rem (14px)
+- caption: 400, 0.75rem (12px)
+- Tabular figures (`font-variant-numeric: tabular-nums`) on scores and numbers
+
+### Spacing & Layout
+- 8dp base grid — all spacing in multiples of 4px/8px
+- Cards: `border-radius: 16px`, subtle shadow `0 1px 3px rgba(0,0,0,0.08)`
+- Inputs: `border-radius: 10px`, `min-height: 44px`
+- Buttons: `border-radius: 8px`, `min-height: 44px`, `min-width: 44px`
+- Pills/badges: `border-radius: 100px`
+- Page max-width: 768px centered (news reader width)
+- Section gap: 24px mobile, 32px desktop
+- Safe padding-bottom: 24px (above potential browser chrome)
+
+### Accessibility (WCAG-AA minimum, aim AAA for text)
+- All text contrast ≥ 4.5:1 (body), ≥ 3:1 (large text/icons)
+- Visible focus rings: 2px solid #1D4ED8, 2px offset
+- All interactive elements have aria-labels or visible labels
+- Tab order matches visual order
+- Color never the sole indicator — always pair with icon or label
+- `prefers-reduced-motion`: disable all transitions/animations
+
+### Icons (Heroicons SVG inline — no emoji as structural icons)
+- Use heroicons outline style (24px, stroke-width 1.5)
+- Emoji allowed only as decorative emphasis in Thai content text, not as UI controls
+- Input tab icons: replace emoji with heroicons (ChatBubbleLeftIcon, LinkIcon, PhotoIcon)
+- Score/verdict icons: CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, QuestionMarkCircleIcon
+
+---
+
+## Per-Screen Redesign Instructions
+
+### All Pages
+
+**Remove**: Sticky privacy banner emoji `🔒` — replace with ShieldCheckIcon (heroicon)
+**Update**: Privacy banner bg light: `#EFF6FF` → `#F0F9FF`; border-bottom: 1px solid #BAE6FD
+**Header**: Add `backdrop-filter: blur(12px)` + `background: rgba(255,255,255,0.85)` for sticky scroll — glassmorphism header only
+**Nav active state**: 2px bottom border (primary color) instead of bg highlight
+**Add skip-to-main link**: `<a href="#main" class="sr-only focus:not-sr-only">ข้ามไปเนื้อหาหลัก</a>`
+
+---
+
+### home.html
+
+**Hero section**:
+- Replace solid gradient with: dark navy `#0F172A` bg + subtle radial glow at center (primary blue, opacity 15%) + Thai text pattern SVG watermark (opacity 3%)
+- H1 font-size: 2.25rem mobile → 3rem desktop
+- Add trust indicator row below tagline: 3 pills — "✓ AI วิเคราะห์", "✓ แหล่งข้อมูลไทย", "✓ ปลอดภัย 100%"
+
+**Input card**:
+- Card: glassmorphism `background: rgba(255,255,255,0.95)`, `backdrop-filter: blur(20px)`, border `1px solid rgba(255,255,255,0.6)`, shadow `0 8px 32px rgba(0,0,0,0.12)`
+- Tab switcher: remove emoji, use heroicons. Active tab: solid fill bg with primary color text + bottom border animation (150ms ease-out)
+- Text textarea: `min-height: 120px`, resize vertical, char counter bottom-right
+- Submit button `ตรวจสอบ`: full-width, primary bg, 52px height, 600 weight, loading state (spinner + "กำลังวิเคราะห์..."), disable during fetch
+- Add input type label above: small caps Thai label ("พิมพ์ข้อความ", "วาง URL", "อัปโหลดภาพ")
+
+**Below card**:
+- "วิธีใช้งาน" 3-step guide (icon + label): Step cards in a horizontal row on desktop, vertical on mobile
+- Replace with minimal icon+text: 1.ใส่ข้อมูล → 2.AI วิเคราะห์ → 3.ดูผล
+
+---
+
+### result.html
+
+**Verdict banner**:
+- Full-width colored banner (verdict color at 10% opacity bg, 100% color for border-left 4px + icon)
+- Verdict icon: 48px heroicon (filled) + large Thai verdict text (1.5rem, weight 700)
+- Confidence score: tabular-nums, monospaced feel, large (3rem) + animated count-up on load (300ms, ease-out) — skip if prefers-reduced-motion
+
+**Score bar**:
+- Segmented 5-color track (equal width segments), smooth fill animation left-to-right 400ms ease-out
+- Active segment pops: scale(1.05) + brighter shade + tooltip on hover/tap
+- Label below: score number + Thai level name
+
+**Stat cards**:
+- 2-column grid on mobile, 4-column on desktop
+- Each: icon (24px) + number (600, tabular-nums) + Thai label (14px, secondary color)
+- Subtle left-border accent (4px, verdict color)
+
+**AI Reasoning**:
+- Card with light yellow-50 bg (light mode) / zinc-800 (dark)
+- Reasoning bullets: `disc` list, 1.5rem line-height, each bullet fades in staggered (50ms delay per item) — skip if prefers-reduced-motion
+- Add disclaimer below: small italic Thai text "ผลการวิเคราะห์นี้มาจาก AI และอาจมีข้อผิดพลาด โปรดใช้วิจารณญาณ"
+
+**References**:
+- Each ref as a card row: source logo placeholder (32px circle) + source name (weight 600) + link icon + credibility badge pill
+- Hover: slight elevation change (shadow-md)
+
+---
+
+### history.html
+
+**List items**:
+- Each item: verdict color left-border (4px) + truncated query text + verdict badge pill + relative time (Thai: "2 ชั่วโมงที่แล้ว") + delete button (appears on hover/focus)
+- Empty state: centered illustration placeholder + Thai text "ยังไม่มีประวัติ" + sub "ลองตรวจสอบข่าวสักชิ้น"
+
+**Search/filter**:
+- Search input: full-width, 44px height, leading search icon (MagnifyingGlassIcon), clear X button when has value
+- Filter pills: scrollable horizontal row — "ทั้งหมด", "ข่าวปลอม", "น่าเชื่อถือ", "ไม่แน่ใจ"
+- Active filter pill: primary color bg, white text
+
+**Action buttons** (Export/Import/Clear):
+- Group in a top-right dropdown menu (EllipsisVerticalIcon) on mobile, inline buttons on desktop
+- Clear all: show confirmation dialog before action (destructive — ArrowPathIcon, red color)
+
+---
+
+### trending.html
+
+**Header metrics row**:
+- 3 stat cards: total checks today / most checked verdict / top keyword — horizontal scroll on mobile
+
+**Trending list**:
+- Rank number: large (2rem), light color, left column
+- Topic text: truncate at 2 lines, 600 weight
+- Count badge + verdict badge: right-aligned flex
+- Row divider: 1px border, no full-card box per item (list style, not card grid)
+- Top 3 rows: subtle gold/silver/bronze left-border accent
+
+**Period selector**:
+- Segmented control (3 options: วันนี้/สัปดาห์/เดือน), not dropdown
+- Switching period: skeleton shimmer loading on list (300ms)
+
+---
+
+## Animation Rules (apply globally)
+
+- All transitions: `transition-property: color, background-color, border-color, opacity, transform; transition-duration: 150ms; transition-timing-function: ease-out`
+- Enter animations: fade-in + translateY(8px→0), 200ms ease-out
+- No width/height/top/left animation
+- List item stagger: 30ms per item, max 10 items animated (rest instant)
+- Skeleton shimmer: gradient sweep 1.5s linear infinite — for loading states
+- Disabled state: opacity 0.5, cursor not-allowed
+- All animations gated: `@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }`
+
+---
+
+## Deliverables — Part 1: HTML Prototypes
+
+Update all 4 files in `ui-prototypes/` (home.html, result.html, history.html, trending.html):
+1. Apply new design tokens (CSS custom properties in `:root` and `[data-theme="dark"]`)
+2. Replace emoji icons in nav/tabs/controls with Heroicons SVG (inline, aria-hidden="true")
+3. Implement glassmorphism input card on home page
+4. Implement dark mode via `prefers-color-scheme` with updated dark tokens
+5. Ensure all interactive elements ≥44×44px touch target
+6. Add focus-visible rings to all interactive elements
+7. Add skip-to-main link on each page
+8. Apply 8dp spacing grid throughout
+9. Implement reduced-motion media query gate on all animations
+10. Add Thai aria-labels to all icon-only buttons
+
+After updating prototypes, update `docs/ui-requirement.md` to reflect the new design tokens, component patterns, and interaction specs.
+
+---
+
+## Deliverables — Part 2: Next.js Implementation
+
+Apply the same redesign to the actual Next.js app. The stack is Next.js 14 App Router + TailwindCSS v4 + TypeScript. Do NOT install @heroicons/react — use inline SVG strings instead (same heroicons, just rendered as JSX `<svg>` elements).
+
+### `app/globals.css`
+- Replace `:root` CSS variables with new palette (match the tokens above)
+- Update `.verdict-*` and `.badge-*` classes to use new muted colors
+- Add: `@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }`
+- Add: `.tabular-nums { font-variant-numeric: tabular-nums; }`
+
+### `components/PrivacyBanner.tsx`
+- Replace `🔒` emoji with inline ShieldCheckIcon SVG (16×16, stroke-width 1.5)
+- Update bg: `bg-sky-50 dark:bg-sky-950`, border: `border-sky-200 dark:border-sky-900`, text: `text-sky-700 dark:text-sky-300`
+
+### `components/Header.tsx`
+- Make header sticky + glassmorphism: `sticky top-0 z-50 bg-white/85 dark:bg-gray-900/85 backdrop-blur-md`
+- Replace `✓` text in logo with inline CheckIcon SVG (20×20, stroke-width 2.5)
+- Change active nav link style: remove `bg-blue-50` highlight, replace with `border-b-2 border-blue-700` bottom underline (keep height 60px so border shows)
+- Add skip-to-main: `<a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-700 focus:text-white">ข้ามไปเนื้อหาหลัก</a>` as first child
+
+### `app/page.tsx`
+- **Hero**: replace `bg-gradient-to-br from-blue-800...` with `bg-[#0F172A]` + inline `style` for radial glow: `style={{ backgroundImage: 'radial-gradient(ellipse 80% 60% at 50% 60%, rgba(29,78,216,0.18) 0%, transparent 70%)' }}`
+- Add trust pills row below tagline: 3 `<span>` pills with `bg-white/10 border border-white/20 text-white/90 rounded-full px-3.5 py-1 text-sm font-medium` — "✓ AI วิเคราะห์", "✓ แหล่งข้อมูลไทย", "✓ ปลอดภัย 100%"
+- **Input card**: add glassmorphism `bg-white/97 dark:bg-gray-900/97 backdrop-blur-xl border border-white/60 dark:border-white/[0.06] shadow-2xl`
+- **Tabs**: replace emoji strings `'📝 ข้อความ'` etc. with inline SVG heroicons + Thai label (ChatBubbleLeftIcon / LinkIcon / PhotoIcon, 16×16)
+- Add small caps input label above each panel: `<p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">`
+- Submit button: change height to `h-[52px]`. When `loading === false` show MagnifyingGlassIcon (20×20) + "ตรวจสอบ". When `loading === true` show spinning ArrowPathIcon (20×20, `animate-spin`) + "กำลังวิเคราะห์..." — button stays disabled and full-width during loading. Gate animation off with `motion-reduce:animate-none` class.
+- **Add "วิธีใช้งาน" section** below stats row: `<h2>วิธีใช้งาน</h2>` + 3-column grid of step cards (step number label + icon + Thai step name). Steps: ใส่ข้อมูล / AI วิเคราะห์ / ดูผลลัพธ์. Use PencilSquareIcon / SparklesIcon / CheckCircleIcon (28×28).
+
+### `app/history/page.tsx`
+- **History item rows**: add `border-l-4` with verdict color — add a helper `VERDICT_BORDER` map: `{ DANGEROUS: 'border-l-red-700', SUSPICIOUS: 'border-l-amber-700', UNCERTAIN: 'border-l-yellow-700', LIKELY_TRUE: 'border-l-lime-700', VERIFIED: 'border-l-emerald-700' }`. Apply to each row div.
+- **Type icons**: replace `TYPE_ICONS` emoji map with inline SVG components — ChatBubbleLeftIcon for text, LinkIcon for url, PhotoIcon for image (20×20)
+- **Filter pills**: replace the `<select>` verdict dropdown with horizontal scrollable pill buttons. Use the same `VERDICT_OPTIONS` array. Active pill: `bg-blue-700 text-white border-blue-700`, inactive: `border-slate-200 text-slate-600 hover:border-blue-700`. Each pill: `rounded-full px-3.5 py-1 text-sm font-medium border min-h-[36px]`
+- **Search input**: add leading MagnifyingGlassIcon (18×18) — wrap input in `relative div`, position icon `absolute left-3 top-1/2 -translate-y-1/2`; add `pl-10` to input
+- **Action buttons**: replace `⬇` `⬆` `🗑` emoji with inline SVG heroicons (ArrowDownTrayIcon, ArrowUpTrayIcon, TrashIcon, 16×16)
+- **Delete button per row**: replace `🗑` with inline TrashIcon SVG (16×16)
+
+### `app/trending/page.tsx`
+- **Page title**: replace `🔥` emoji with inline FireIcon SVG (22×22, `text-orange-500`) before the text
+- **Period tabs**: already correct structure — just add `aria-pressed` attribute: `aria-pressed={period === p}` on each button
+- **Rank display**: replace `RANK_ICONS` emoji map (`🥇🥈🥉`) with styled rank numbers. Top 3 get left-border accents: rank 1 = `border-l-[4px] border-l-amber-500`, rank 2 = `border-l-[4px] border-l-slate-400`, rank 3 = `border-l-[4px] border-l-amber-700`. Rank number color: rank 1 = `text-amber-500`, rank 2 = `text-slate-400`, rank 3 = `text-amber-700`
+- **Trend indicators**: replace `▲` / `▼` text characters with inline ArrowUpIcon / ArrowDownIcon SVG (12×12)
+- **Privacy notice**: replace `🔐` with inline LockClosedIcon SVG (16×16)
+- **Loading state**: replace plain text "กำลังโหลด..." with skeleton shimmer rows — 5 `<div className="animate-pulse h-16 bg-slate-200 dark:bg-slate-700 rounded-xl">` divs
+
+### `app/result/[id]/page.tsx`
+- **Verdict banner**: replace the score-circle + flex layout with a full-width banner card:
+  - Outer div: `border-l-4 rounded-xl p-5` with verdict-color left border and `bg-[verdictColor]/[0.06]` background
+  - Use `VERDICT_BORDER_COLOR` and `VERDICT_BG_COLOR` maps (inline hex, since Tailwind v4 may not have dynamic colors)
+  - Left: verdict icon SVG 48×48 (XCircleIcon for DANGEROUS, ExclamationTriangleIcon for SUSPICIOUS, QuestionMarkCircleIcon for UNCERTAIN, CheckIcon for LIKELY_TRUE, CheckCircleIcon for VERIFIED)
+  - Score: `<span className="text-5xl font-bold tabular-nums">{analysis.score}</span><span className="text-xl text-slate-500">/100 คะแนน</span>`
+- **Stat cards**: add `border-l-4` accent — support=`border-l-emerald-600`, oppose=`border-l-red-700`, neutral=`border-l-slate-400`
+- **Reasoning section**: add AI disclaimer `<p className="text-xs italic text-slate-400 mt-3">* ผลการวิเคราะห์นี้มาจาก AI และอาจมีข้อผิดพลาด โปรดใช้วิจารณญาณ</p>` after the reasoning list
+- **Reference items**: add 32×32 avatar circle (initial letter of sourceName, `bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold text-slate-500`) before source name
+- **Action buttons**: replace `←` text and `🔄` emoji with inline ArrowLeftIcon and ArrowPathIcon SVG (16×16)

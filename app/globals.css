@@ -2,27 +2,51 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #1E40AF;
-  --danger: #DC2626;
-  --verified: #059669;
-  --warning: #D97706;
-  --yellow: #CA8A04;
-  --lime: #65A30D;
+  --color-primary: #1D4ED8;
+  --color-primary-hover: #1E40AF;
+  --color-danger: #B91C1C;
+  --color-verified: #047857;
+  --color-warning: #B45309;
+  --color-neutral: #6B7280;
+  --color-surface: #FFFFFF;
+  --color-surface-secondary: #F8FAFC;
+  --color-border: #E2E8F0;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #111827;
+    --color-surface-secondary: #1E293B;
+    --color-border: #1E293B;
+    --color-text-primary: #F1F5F9;
+    --color-text-secondary: #94A3B8;
+  }
 }
 
 body {
   font-family: 'IBM Plex Sans Thai', sans-serif;
 }
 
-/* Verdict colors */
-.verdict-DANGEROUS { color: #DC2626; border-color: #DC2626; }
-.verdict-SUSPICIOUS { color: #D97706; border-color: #D97706; }
-.verdict-UNCERTAIN { color: #CA8A04; border-color: #CA8A04; }
-.verdict-LIKELY_TRUE { color: #65A30D; border-color: #65A30D; }
-.verdict-VERIFIED { color: #059669; border-color: #059669; }
+/* Verdict colors — muted palette */
+.verdict-DANGEROUS { color: #B91C1C; border-color: #B91C1C; }
+.verdict-SUSPICIOUS { color: #B45309; border-color: #B45309; }
+.verdict-UNCERTAIN { color: #B45309; border-color: #B45309; }
+.verdict-LIKELY_TRUE { color: #047857; border-color: #047857; }
+.verdict-VERIFIED { color: #047857; border-color: #047857; }
 
-.badge-DANGEROUS { background: #FEE2E2; color: #DC2626; }
-.badge-SUSPICIOUS { background: #FEF3C7; color: #D97706; }
-.badge-UNCERTAIN { background: #FEF9C3; color: #CA8A04; }
-.badge-LIKELY_TRUE { background: #F0FDF4; color: #65A30D; }
-.badge-VERIFIED { background: #ECFDF5; color: #059669; }
+.badge-DANGEROUS { background: #FEE2E2; color: #B91C1C; }
+.badge-SUSPICIOUS { background: #FEF3C7; color: #B45309; }
+.badge-UNCERTAIN { background: #FEF9C3; color: #B45309; }
+.badge-LIKELY_TRUE { background: #ECFDF5; color: #047857; }
+.badge-VERIFIED { background: #D1FAE5; color: #047857; }
+
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

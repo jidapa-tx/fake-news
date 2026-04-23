@@ -9,239 +9,307 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --primary: #1E40AF;
-      --primary-light: #3B82F6;
-      --danger: #DC2626;
-      --verified: #059669;
-      --warning: #D97706;
-      --yellow: #CA8A04;
-      --lime: #65A30D;
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --border: #E2E8F0;
-      --text: #0F172A;
-      --text-secondary: #64748B;
-      --radius: 12px;
+      --color-primary: #1D4ED8;
+      --color-primary-hover: #1E40AF;
+      --color-danger: #B91C1C;
+      --color-verified: #047857;
+      --color-warning: #B45309;
+      --color-neutral: #6B7280;
+      --color-surface: #FFFFFF;
+      --color-surface-secondary: #F8FAFC;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #475569;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0F172A;
-        --surface: #1E293B;
-        --border: #334155;
-        --text: #F1F5F9;
-        --text-secondary: #94A3B8;
-        --primary-light: #60A5FA;
+        --color-surface: #111827;
+        --color-surface-secondary: #1E293B;
+        --color-border: #1E293B;
+        --color-text-primary: #F1F5F9;
+        --color-text-secondary: #94A3B8;
       }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'IBM Plex Sans Thai', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--color-surface-secondary);
+      color: var(--color-text-primary);
       min-height: 100vh;
     }
+    /* Skip link */
+    .skip-link {
+      position: absolute; left: -9999px; top: 0; z-index: 999;
+      background: var(--color-primary); color: white;
+      padding: 8px 16px; font-size: 14px; font-weight: 500;
+      text-decoration: none;
+    }
+    .skip-link:focus { left: 0; }
     /* Privacy Banner */
     .privacy-banner {
-      background: #EFF6FF;
-      border-bottom: 1px solid #BFDBFE;
+      background: #F0F9FF;
+      border-bottom: 1px solid #BAE6FD;
       padding: 8px 16px;
       text-align: center;
       font-size: 13px;
-      color: var(--primary);
+      color: #0369A1;
       font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     @media (prefers-color-scheme: dark) {
-      .privacy-banner { background: #1e3a5f; border-color: #1E40AF; color: #93C5FD; }
+      .privacy-banner { background: #0c1a2e; border-color: #075985; color: #7DD3FC; }
     }
     /* Header */
     header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
       padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       height: 60px;
     }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    @media (prefers-color-scheme: dark) {
+      header { background: rgba(17,24,39,0.85); }
+    }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; flex-shrink: 0; }
     .logo-icon {
-      width: 36px; height: 36px;
-      background: var(--primary);
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: var(--color-primary);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 18px;
+      color: white;
     }
-    .logo-text { font-size: 18px; font-weight: 600; color: var(--primary); }
-    nav { display: flex; gap: 4px; align-items: center; }
+    .logo-text { font-size: 18px; font-weight: 600; color: var(--color-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 480px) { .logo-text { display: none; } }
+    nav { display: flex; align-items: center; }
     nav a {
-      padding: 6px 14px;
-      border-radius: 8px;
+      height: 60px; display: flex; align-items: center;
+      padding: 0 14px;
       text-decoration: none;
       font-size: 14px;
       font-weight: 500;
-      color: var(--text-secondary);
-      transition: all 0.15s;
+      color: var(--color-text-secondary);
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
     }
-    nav a:hover, nav a.active { background: #EFF6FF; color: var(--primary); }
-    .lang-toggle {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 5px 12px;
-      font-size: 13px;
-      cursor: pointer;
-      background: var(--surface);
-      color: var(--text);
-      font-family: inherit;
-      margin-left: 8px;
-    }
+    nav a:hover { color: var(--color-text-primary); }
+    nav a.active { border-bottom-color: var(--color-primary); color: var(--color-primary); }
     /* Hero */
     .hero {
-      background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 50%, #2563EB 100%);
+      background: #0F172A;
+      background-image: radial-gradient(ellipse 80% 60% at 50% 60%, rgba(29,78,216,0.18) 0%, transparent 70%);
       padding: 56px 24px 48px;
       text-align: center;
       color: white;
     }
-    .hero h1 { font-size: 32px; font-weight: 600; margin-bottom: 12px; }
-    .hero p { font-size: 16px; opacity: 0.85; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+    .hero h1 { font-size: clamp(2.25rem, 5vw, 3rem); font-weight: 600; margin-bottom: 12px; line-height: 1.3; }
+    .hero p { font-size: 16px; opacity: 0.85; max-width: 480px; margin: 0 auto 20px; line-height: 1.6; }
+    .trust-pills { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .trust-pill {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.9);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 14px; font-weight: 500;
+    }
     /* Main Card */
     .container { max-width: 720px; margin: -32px auto 48px; padding: 0 16px; }
     .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
       padding: 28px;
     }
-    /* Tabs */
-    .tabs { display: flex; gap: 4px; background: var(--bg); border-radius: 10px; padding: 4px; margin-bottom: 20px; }
-    .tab {
-      flex: 1; padding: 9px; border-radius: 8px; border: none;
-      font-family: inherit; font-size: 14px; font-weight: 500;
-      cursor: pointer; background: transparent; color: var(--text-secondary);
-      transition: all 0.15s;
+    @media (prefers-color-scheme: dark) {
+      .card { background: rgba(17,24,39,0.97); border-color: rgba(255,255,255,0.06); }
     }
-    .tab.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; background: var(--color-surface-secondary); border-radius: 12px; padding: 4px; margin-bottom: 8px; }
+    .tab {
+      flex: 1; padding: 9px 4px; border-radius: 8px; border: none;
+      font-family: inherit; font-size: 14px; font-weight: 500;
+      cursor: pointer; background: transparent; color: var(--color-text-secondary);
+      transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      min-height: 44px;
+    }
+    .tab.active { background: var(--color-surface); color: var(--color-primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .tab:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    /* Input label */
+    .input-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
     /* Input Panels */
     .panel { display: none; }
     .panel.active { display: block; }
     textarea {
-      width: 100%; min-height: 140px; padding: 14px;
-      border: 1.5px solid var(--border); border-radius: 10px;
+      width: 100%; min-height: 120px; padding: 14px;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
       font-family: inherit; font-size: 15px; resize: vertical;
-      background: var(--bg); color: var(--text);
+      background: var(--color-surface-secondary); color: var(--color-text-primary);
       transition: border-color 0.15s; outline: none;
     }
-    textarea:focus { border-color: var(--primary); }
-    .char-count { text-align: right; font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+    textarea:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(29,78,216,0.1); }
+    .char-count { text-align: right; font-size: 12px; color: var(--color-text-secondary); margin-top: 6px; font-variant-numeric: tabular-nums; }
     .url-input {
       width: 100%; padding: 14px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      font-family: inherit; font-size: 15px;
-      background: var(--bg); color: var(--text);
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-family: inherit; font-size: 15px; min-height: 44px;
+      background: var(--color-surface-secondary); color: var(--color-text-primary);
       outline: none; transition: border-color 0.15s;
     }
-    .url-input:focus { border-color: var(--primary); }
-    .url-hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
-    /* Image Upload */
+    .url-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(29,78,216,0.1); }
+    .url-hint { font-size: 12px; color: var(--color-text-secondary); margin-top: 6px; }
     .upload-zone {
-      border: 2px dashed var(--border); border-radius: 10px;
+      border: 2px dashed var(--color-border); border-radius: 10px;
       padding: 48px 24px; text-align: center; cursor: pointer;
-      transition: all 0.15s; background: var(--bg);
+      transition: all 0.15s; background: var(--color-surface-secondary);
     }
-    .upload-zone:hover { border-color: var(--primary); background: #EFF6FF; }
+    .upload-zone:hover { border-color: var(--color-primary); background: #EFF6FF; }
     .upload-icon { font-size: 40px; margin-bottom: 12px; }
-    .upload-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-    .upload-hint { font-size: 13px; color: var(--text-secondary); }
+    .upload-text { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+    .upload-hint { font-size: 13px; color: var(--color-text-secondary); }
     input[type="file"] { display: none; }
     /* Submit Button */
     .btn-primary {
-      width: 100%; padding: 14px;
-      background: var(--primary); color: white;
-      border: none; border-radius: 10px;
+      width: 100%;
+      height: 52px;
+      background: var(--color-primary); color: white;
+      border: none; border-radius: 8px;
       font-family: inherit; font-size: 16px; font-weight: 600;
       cursor: pointer; margin-top: 16px;
       transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-primary:hover { background: #1D4ED8; }
-    .btn-primary:disabled { background: #94A3B8; cursor: not-allowed; }
-    /* Stats row */
-    .stats-row { display: flex; gap: 16px; margin-top: 32px; }
-    .stat-card {
-      flex: 1; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 16px; text-align: center;
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    /* How-to section */
+    .howto { margin-top: 32px; }
+    .howto h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--color-text-primary); }
+    .howto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .howto-card {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: 16px; padding: 16px;
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px;
     }
-    .stat-number { font-size: 24px; font-weight: 600; color: var(--primary); }
-    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    .howto-step { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .howto-icon { color: var(--color-primary); }
+    .howto-label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
     /* Recent checks */
     .section-title { font-size: 16px; font-weight: 600; margin: 32px 0 12px; }
     .check-list { display: flex; flex-direction: column; gap: 8px; }
     .check-item {
       display: flex; align-items: center; gap: 12px;
-      padding: 12px 14px;
-      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 16px;
+      border: 1px solid var(--color-border); border-radius: 16px;
       cursor: pointer; transition: all 0.15s;
-      text-decoration: none; color: var(--text);
+      text-decoration: none; color: var(--color-text-primary);
+      background: var(--color-surface);
     }
-    .check-item:hover { border-color: var(--primary); background: #EFF6FF; }
-    .verdict-badge {
-      padding: 3px 10px; border-radius: 100px;
-      font-size: 12px; font-weight: 500; white-space: nowrap;
-    }
-    .badge-danger { background: #FEE2E2; color: var(--danger); }
-    .badge-suspicious { background: #FEF3C7; color: var(--warning); }
-    .badge-uncertain { background: #FEF9C3; color: var(--yellow); }
-    .badge-likely { background: #F0FDF4; color: var(--lime); }
-    .badge-verified { background: #ECFDF5; color: var(--verified); }
+    .check-item:hover { border-color: var(--color-primary); }
+    .verdict-badge { padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .badge-danger { background: #FEE2E2; color: #B91C1C; }
+    .badge-suspicious { background: #FEF3C7; color: #B45309; }
+    .badge-uncertain { background: #FEF9C3; color: #B45309; }
+    .badge-likely { background: #ECFDF5; color: #047857; }
+    .badge-verified { background: #D1FAE5; color: #047857; }
     .check-query { flex: 1; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .check-time { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .check-time { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    /* Spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 1s linear infinite; }
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
     @media (max-width: 480px) {
-      .hero h1 { font-size: 24px; }
-      .stats-row { flex-wrap: wrap; }
-      nav a { padding: 6px 8px; font-size: 13px; }
+      .hero h1 { font-size: 2rem; }
+      .howto-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="privacy-banner">🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server</div>
+  <a href="#main" class="skip-link">ข้ามไปเนื้อหาหลัก</a>
+
+  <div class="privacy-banner">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 010 12c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" />
+    </svg>
+    ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server
+  </div>
 
   <header>
-    <a class="logo" href="home.html">
-      <div class="logo-icon">✓</div>
+    <a class="logo" href="home.html" aria-label="ชัวร์ก่อนแชร์ หน้าหลัก">
+      <div class="logo-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
       <span class="logo-text">ชัวร์ก่อนแชร์</span>
     </a>
-    <nav>
+    <nav aria-label="เมนูหลัก">
       <a href="home.html" class="active">หน้าหลัก</a>
       <a href="trending.html">ยอดนิยม</a>
       <a href="history.html">ประวัติ</a>
-      <button class="lang-toggle" onclick="toggleLang(this)">EN</button>
     </nav>
   </header>
 
   <div class="hero">
     <h1>ตรวจสอบข่าวก่อนส่งต่อ</h1>
     <p>เพราะข่าวปลอมแพร่เร็วกว่าที่คุณคิด — ตรวจสอบด้วย AI และแหล่งข้อมูลที่น่าเชื่อถือ</p>
+    <div class="trust-pills">
+      <span class="trust-pill">✓ AI วิเคราะห์</span>
+      <span class="trust-pill">✓ แหล่งข้อมูลไทย</span>
+      <span class="trust-pill">✓ ปลอดภัย 100%</span>
+    </div>
   </div>
 
-  <div class="container">
+  <div id="main" class="container">
     <div class="card">
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab('text', this)">📝 ข้อความ</button>
-        <button class="tab" onclick="switchTab('url', this)">🔗 URL</button>
-        <button class="tab" onclick="switchTab('image', this)">🖼 รูปภาพ</button>
+      <div class="tabs" role="tablist">
+        <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-text" onclick="switchTab('text', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369.64.05 1.084.69.858 1.295l-.17.454a2.25 2.25 0 001.955 3.024h.087c1.207 0 2.332-.557 3.081-1.516a9.002 9.002 0 00-2.573-12.508 9.015 9.015 0 00-9.23 1.15A9.002 9.002 0 002.25 12.76z" />
+          </svg>
+          ข้อความ
+        </button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-url" onclick="switchTab('url', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+          </svg>
+          URL
+        </button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-image" onclick="switchTab('image', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+          รูปภาพ
+        </button>
       </div>
 
-      <div id="panel-text" class="panel active">
+      <div id="panel-text" class="panel active" role="tabpanel">
+        <div class="input-label">พิมพ์ข้อความ</div>
         <textarea id="text-input" placeholder="วางข้อความหรือเนื้อหาข่าวที่ต้องการตรวจสอบ..." maxlength="5000"
-          oninput="updateCharCount(this)"></textarea>
+          oninput="updateCharCount(this)" aria-label="ข้อความที่ต้องการตรวจสอบ"></textarea>
         <div class="char-count"><span id="char-count">0</span>/5000</div>
       </div>
 
-      <div id="panel-url" class="panel">
-        <input class="url-input" type="url" placeholder="https://example.com/news/article" id="url-input" />
+      <div id="panel-url" class="panel" role="tabpanel">
+        <div class="input-label">วาง URL</div>
+        <input class="url-input" type="url" placeholder="https://example.com/news/article" id="url-input" aria-label="URL ที่ต้องการตรวจสอบ" />
         <div class="url-hint">ใส่ URL ของข่าวที่ต้องการตรวจสอบ ระบบจะวิเคราะห์ทั้งเนื้อหาและความน่าเชื่อถือของเว็บไซต์</div>
       </div>
 
-      <div id="panel-image" class="panel">
-        <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="upload-zone">
+      <div id="panel-image" class="panel" role="tabpanel">
+        <div class="input-label">อัปโหลดภาพ</div>
+        <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="upload-zone" role="button" aria-label="อัปโหลดรูปภาพ">
           <div class="upload-icon">📷</div>
           <div class="upload-text">คลิกหรือลากไฟล์รูปภาพมาวางที่นี่</div>
           <div class="upload-hint">รองรับ JPG, PNG, WEBP — ขนาดสูงสุด 10 MB</div>
@@ -249,21 +317,45 @@
         <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.webp" onchange="handleFile(this)" />
       </div>
 
-      <button class="btn-primary" onclick="submitCheck()">🔍 ตรวจสอบ</button>
+      <button class="btn-primary" onclick="submitCheck()" id="submit-btn" aria-label="ตรวจสอบ">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true" id="submit-icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+        <span id="submit-text">ตรวจสอบ</span>
+      </button>
     </div>
 
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-number">12,847</div>
-        <div class="stat-label">ข่าวที่ตรวจสอบแล้ว</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">73%</div>
-        <div class="stat-label">พบข้อมูลน่าสงสัย</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">22+</div>
-        <div class="stat-label">แหล่งข้อมูลที่เชื่อถือได้</div>
+    <!-- How-to section -->
+    <div class="howto">
+      <h2>วิธีใช้งาน</h2>
+      <div class="howto-grid">
+        <div class="howto-card">
+          <span class="howto-step">ขั้นที่ 1</span>
+          <div class="howto-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="28" height="28" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+            </svg>
+          </div>
+          <span class="howto-label">ใส่ข้อมูล</span>
+        </div>
+        <div class="howto-card">
+          <span class="howto-step">ขั้นที่ 2</span>
+          <div class="howto-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="28" height="28" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+            </svg>
+          </div>
+          <span class="howto-label">AI วิเคราะห์</span>
+        </div>
+        <div class="howto-card">
+          <span class="howto-step">ขั้นที่ 3</span>
+          <div class="howto-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="28" height="28" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <span class="howto-label">ดูผลลัพธ์</span>
+        </div>
       </div>
     </div>
 
@@ -293,9 +385,10 @@
     function switchTab(tab, btn) {
       currentTab = tab;
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
       document.getElementById('panel-' + tab).classList.add('active');
       btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
     }
 
     function updateCharCount(el) {
@@ -305,37 +398,28 @@
     function handleFile(input) {
       const file = input.files[0];
       if (!file) return;
-      if (file.size > 10 * 1024 * 1024) {
-        alert('ไฟล์มีขนาดเกิน 10 MB กรุณาเลือกไฟล์ใหม่');
-        return;
-      }
+      if (file.size > 10 * 1024 * 1024) { alert('ไฟล์มีขนาดเกิน 10 MB'); return; }
       const zone = document.getElementById('upload-zone');
       zone.innerHTML = `<div class="upload-icon">✅</div><div class="upload-text">${file.name}</div><div class="upload-hint">${(file.size/1024/1024).toFixed(2)} MB — พร้อมตรวจสอบ</div>`;
     }
 
     function submitCheck() {
-      window.location.href = 'result.html';
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      document.getElementById('submit-text').textContent = 'กำลังวิเคราะห์...';
+      document.getElementById('submit-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />';
+      document.getElementById('submit-icon').style.animation = 'spin 1s linear infinite';
+      setTimeout(() => { window.location.href = 'result.html'; }, 800);
     }
 
-    function toggleLang(btn) {
-      btn.textContent = btn.textContent === 'EN' ? 'TH' : 'EN';
-    }
-
-    // Drag and drop
     const zone = document.getElementById('upload-zone');
     if (zone) {
-      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = '#1E40AF'; });
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--color-primary)'; });
       zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
       zone.addEventListener('drop', e => {
-        e.preventDefault();
-        zone.style.borderColor = '';
+        e.preventDefault(); zone.style.borderColor = '';
         const file = e.dataTransfer.files[0];
-        if (file) {
-          const dt = new DataTransfer();
-          dt.items.add(file);
-          document.getElementById('file-input').files = dt.files;
-          handleFile(document.getElementById('file-input'));
-        }
+        if (file) { const dt = new DataTransfer(); dt.items.add(file); document.getElementById('file-input').files = dt.files; handleFile(document.getElementById('file-input')); }
       });
     }
   </script>

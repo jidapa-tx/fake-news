@@ -9,168 +9,144 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --primary: #1E40AF;
-      --danger: #DC2626;
-      --verified: #059669;
-      --warning: #D97706;
-      --yellow: #CA8A04;
-      --lime: #65A30D;
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --border: #E2E8F0;
-      --text: #0F172A;
-      --text-secondary: #64748B;
-      --radius: 12px;
+      --color-primary: #1D4ED8;
+      --color-primary-hover: #1E40AF;
+      --color-danger: #B91C1C;
+      --color-verified: #047857;
+      --color-warning: #B45309;
+      --color-neutral: #6B7280;
+      --color-surface: #FFFFFF;
+      --color-surface-secondary: #F8FAFC;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #475569;
     }
     @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0F172A; --surface: #1E293B; --border: #334155;
-        --text: #F1F5F9; --text-secondary: #94A3B8;
-      }
+      :root { --color-surface: #111827; --color-surface-secondary: #1E293B; --color-border: #1E293B; --color-text-primary: #F1F5F9; --color-text-secondary: #94A3B8; }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    .privacy-banner { background: #EFF6FF; border-bottom: 1px solid #BFDBFE; padding: 8px 16px; text-align: center; font-size: 13px; color: var(--primary); font-weight: 500; }
-    @media (prefers-color-scheme: dark) { .privacy-banner { background: #1e3a5f; border-color: #1E40AF; color: #93C5FD; } }
-    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
-    .logo-text { font-size: 18px; font-weight: 600; color: var(--primary); }
-    nav { display: flex; gap: 4px; align-items: center; }
-    nav a { padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: all 0.15s; }
-    nav a:hover { background: #EFF6FF; color: var(--primary); }
-    .lang-toggle { border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px; font-size: 13px; cursor: pointer; background: var(--surface); color: var(--text); font-family: inherit; margin-left: 8px; }
+    body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--color-surface-secondary); color: var(--color-text-primary); min-height: 100vh; }
+    .skip-link { position: absolute; left: -9999px; top: 0; z-index: 999; background: var(--color-primary); color: white; padding: 8px 16px; font-size: 14px; font-weight: 500; text-decoration: none; }
+    .skip-link:focus { left: 0; }
+    .privacy-banner { background: #F0F9FF; border-bottom: 1px solid #BAE6FD; padding: 8px 16px; text-align: center; font-size: 13px; color: #0369A1; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    @media (prefers-color-scheme: dark) { .privacy-banner { background: #0c1a2e; border-color: #075985; color: #7DD3FC; } }
+    header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--color-border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    @media (prefers-color-scheme: dark) { header { background: rgba(17,24,39,0.85); } }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; flex-shrink: 0; }
+    .logo-icon { width: 36px; height: 36px; flex-shrink: 0; background: var(--color-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+    .logo-text { font-size: 18px; font-weight: 600; color: var(--color-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 480px) { .logo-text { display: none; } }
+    nav { display: flex; align-items: center; }
+    nav a { height: 60px; display: flex; align-items: center; padding: 0 14px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+    nav a:hover { color: var(--color-text-primary); }
+    nav a.active { border-bottom-color: var(--color-primary); color: var(--color-primary); }
     .container { max-width: 760px; margin: 32px auto 48px; padding: 0 16px; display: flex; flex-direction: column; gap: 16px; }
-    .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 24px; }
-    /* Verdict Card */
+    .card { background: var(--color-surface); border-radius: 16px; border: 1px solid var(--color-border); padding: 24px; }
+    /* Verdict Banner */
+    .verdict-banner { border-radius: 16px; padding: 20px; border-left: 4px solid; }
     .verdict-header { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
-    .score-circle {
-      width: 100px; height: 100px; border-radius: 50%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-weight: 600; flex-shrink: 0;
-      border: 6px solid var(--danger);
-      color: var(--danger);
-    }
-    .score-circle .score-num { font-size: 32px; line-height: 1; }
-    .score-circle .score-label { font-size: 11px; }
+    .verdict-icon { flex-shrink: 0; }
     .verdict-info { flex: 1; min-width: 180px; }
-    .verdict-level { font-size: 28px; font-weight: 600; color: var(--danger); margin-bottom: 6px; }
-    .verdict-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
-    /* 5-Segment Bar */
+    .verdict-level { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .verdict-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 16px; }
+    .score-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 12px; }
+    .score-num { font-size: 48px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+    .score-denom { font-size: 20px; color: var(--color-text-secondary); }
     .segment-bar { display: flex; gap: 3px; height: 8px; border-radius: 100px; overflow: hidden; margin-bottom: 8px; }
-    .segment { flex: 1; border-radius: 100px; opacity: 0.25; }
+    .segment { flex: 1; border-radius: 100px; opacity: 0.2; }
     .segment.active { opacity: 1; }
-    .seg-1 { background: var(--danger); }
-    .seg-2 { background: var(--warning); }
-    .seg-3 { background: var(--yellow); }
-    .seg-4 { background: var(--lime); }
-    .seg-5 { background: var(--verified); }
-    .segment-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary); }
-    /* AI Confidence */
+    .seg-1 { background: #EF4444; } .seg-2 { background: #F97316; } .seg-3 { background: #EAB308; } .seg-4 { background: #84CC16; } .seg-5 { background: #10B981; }
+    .segment-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-secondary); }
     .confidence-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-    .confidence-badge { background: #EFF6FF; color: var(--primary); padding: 4px 12px; border-radius: 100px; font-size: 13px; font-weight: 500; }
-    .confidence-warning { background: #FEF3C7; color: var(--warning); padding: 6px 12px; border-radius: 8px; font-size: 13px; }
+    .confidence-badge { background: #EFF6FF; color: var(--color-primary); padding: 4px 12px; border-radius: 100px; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
     /* Stat Cards */
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .stat-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
-    .stat-number { font-size: 22px; font-weight: 600; }
-    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
-    .stat-support .stat-number { color: var(--verified); }
-    .stat-oppose .stat-number { color: var(--danger); }
-    .stat-neutral .stat-number { color: var(--text-secondary); }
-    /* Section Header */
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .section-title { font-size: 16px; font-weight: 600; }
-    /* Reasoning Bullets */
+    .stat-card { border: 1px solid var(--color-border); border-left-width: 4px; border-radius: 12px; padding: 16px; text-align: center; background: var(--color-surface); }
+    .stat-number { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .stat-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+    .stat-support { border-left-color: #047857; } .stat-support .stat-number { color: #047857; }
+    .stat-oppose { border-left-color: #B91C1C; } .stat-oppose .stat-number { color: #B91C1C; }
+    .stat-neutral { border-left-color: #94A3B8; } .stat-neutral .stat-number { color: var(--color-text-secondary); }
+    /* Reasoning */
+    .reasoning-card { background: #FEFCE8; border: 1px solid var(--color-border); border-radius: 16px; padding: 24px; }
+    @media (prefers-color-scheme: dark) { .reasoning-card { background: #27272A; } }
+    .section-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; }
     .reasoning-list { display: flex; flex-direction: column; gap: 8px; }
-    .reasoning-item {
-      padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
-      cursor: pointer; transition: all 0.15s;
-    }
-    .reasoning-item:hover { border-color: var(--warning); }
-    .reasoning-summary { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; }
-    .reasoning-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-    .reasoning-detail { font-size: 13px; color: var(--text-secondary); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); display: none; line-height: 1.6; }
+    .reasoning-item { padding: 12px 14px; border-radius: 10px; border: 1px solid var(--color-border); cursor: pointer; transition: border-color 0.15s; }
+    .reasoning-summary { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; list-style: none; }
+    .reasoning-detail { font-size: 13px; color: var(--color-text-secondary); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--color-border); display: none; line-height: 1.6; }
     .reasoning-item.open .reasoning-detail { display: block; }
+    .ai-disclaimer { font-size: 12px; font-style: italic; color: #94A3B8; margin-top: 12px; }
     /* References */
-    .ref-controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .ref-sort { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 13px; background: var(--surface); color: var(--text); font-family: inherit; cursor: pointer; }
     .ref-list { display: flex; flex-direction: column; gap: 10px; }
-    .ref-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px; transition: border-color 0.15s; }
-    .ref-item:hover { border-color: var(--primary); }
+    .ref-item { border: 1px solid var(--color-border); border-radius: 12px; padding: 14px; transition: all 0.15s; }
+    .ref-item:hover { border-color: var(--color-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
     .ref-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .ref-avatar { width: 32px; height: 32px; background: #F1F5F9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #475569; flex-shrink: 0; }
     .ref-source { font-weight: 600; font-size: 14px; }
     .source-badge { padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 500; }
-    .badge-fact { background: #DCFCE7; color: #166534; }
-    .badge-media { background: #DBEAFE; color: #1E40AF; }
-    .badge-gov { background: #F1F5F9; color: #475569; }
+    .badge-fact { background: #DCFCE7; color: #166534; } .badge-media { background: #DBEAFE; color: #1E40AF; } .badge-gov { background: #F1F5F9; color: #475569; }
     .stance-badge { padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 500; margin-left: auto; }
-    .stance-support { background: #DCFCE7; color: #166534; }
-    .stance-oppose { background: #FEE2E2; color: #991B1B; }
-    .stance-neutral { background: #F1F5F9; color: #475569; }
-    .ref-excerpt { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
-    .ref-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-secondary); }
-    .ref-link { color: var(--primary); text-decoration: none; font-weight: 500; }
-    .credibility-bar { display: flex; align-items: center; gap: 6px; }
-    .cred-fill { height: 4px; border-radius: 100px; background: var(--verified); }
-    .cred-bg { width: 60px; height: 4px; border-radius: 100px; background: var(--border); position: relative; overflow: hidden; }
-    /* Source Analysis */
-    .domain-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .domain-stat { background: var(--bg); border-radius: 8px; padding: 12px; }
-    .domain-stat-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
-    .domain-stat-value { font-size: 14px; font-weight: 500; }
-    .risk-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; }
-    .risk-safe { background: #DCFCE7; color: #166534; }
-    .risk-suspicious { background: #FEF3C7; color: #92400E; }
-    .risk-danger { background: #FEE2E2; color: #991B1B; }
+    .stance-support { background: #DCFCE7; color: #166534; } .stance-oppose { background: #FEE2E2; color: #991B1B; } .stance-neutral { background: #F1F5F9; color: #475569; }
+    .ref-excerpt { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 8px; }
+    .ref-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+    .ref-link { color: var(--color-primary); text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 4px; }
     /* Actions */
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .btn-secondary { padding: 10px 20px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text); transition: all 0.15s; }
-    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-primary { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
-    .btn-primary:hover { background: #1D4ED8; }
-    .last-check { font-size: 13px; color: var(--text-secondary); }
-    @media (max-width: 560px) {
-      .stats-row { grid-template-columns: repeat(3, 1fr); }
-      .domain-info { grid-template-columns: 1fr; }
-      .verdict-header { flex-direction: column; }
-    }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border: 1px solid var(--color-border); border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; background: var(--color-surface); color: var(--color-text-primary); transition: all 0.15s; min-height: 44px; }
+    .btn-secondary:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .btn-secondary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
-  <div class="privacy-banner">🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server</div>
+  <a href="#main" class="skip-link">ข้ามไปเนื้อหาหลัก</a>
+
+  <div class="privacy-banner">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 010 12c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" />
+    </svg>
+    ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server
+  </div>
 
   <header>
-    <a class="logo" href="home.html">
-      <div class="logo-icon">✓</div>
+    <a class="logo" href="home.html" aria-label="ชัวร์ก่อนแชร์ หน้าหลัก">
+      <div class="logo-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
       <span class="logo-text">ชัวร์ก่อนแชร์</span>
     </a>
-    <nav>
+    <nav aria-label="เมนูหลัก">
       <a href="home.html">หน้าหลัก</a>
       <a href="trending.html">ยอดนิยม</a>
       <a href="history.html">ประวัติ</a>
-      <button class="lang-toggle">EN</button>
     </nav>
   </header>
 
-  <div class="container">
+  <div id="main" class="container">
     <!-- Query display -->
     <div class="card" style="padding: 16px 24px;">
-      <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">ข้อความที่ตรวจสอบ</div>
+      <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:4px;">ข้อความที่ตรวจสอบ</div>
       <div style="font-size:14px; font-weight:500;">"ดื่มน้ำร้อนฆ่าไวรัสโคโรนาได้ แพทย์จีนยืนยันผลการทดลองทางคลินิก..."</div>
-      <div class="last-check" style="margin-top:8px;">ตรวจครั้งล่าสุด: 2 นาทีที่แล้ว</div>
+      <div style="font-size:12px; color:var(--color-text-secondary); margin-top:8px; font-variant-numeric:tabular-nums;">ตรวจครั้งล่าสุด: 2 นาทีที่แล้ว</div>
     </div>
 
-    <!-- Verdict Card -->
-    <div class="card">
+    <!-- Verdict Banner -->
+    <div class="verdict-banner" style="border-left-color:#B91C1C; background:rgba(185,28,28,0.06);">
       <div class="verdict-header">
-        <div class="score-circle">
-          <span class="score-num">8</span>
-          <span class="score-label">คะแนน</span>
+        <div class="verdict-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#B91C1C" width="48" height="48">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
         <div class="verdict-info">
-          <div class="verdict-level">⚠ อันตราย</div>
+          <div class="verdict-level" style="color:#B91C1C;">อันตราย</div>
           <div class="verdict-sub">ข้อมูลนี้ผิดพลาดและอาจเป็นอันตราย</div>
+          <div class="score-row">
+            <span class="score-num" style="color:#B91C1C;">8</span>
+            <span class="score-denom">/100 คะแนน</span>
+          </div>
           <div class="segment-bar">
             <div class="segment seg-1 active"></div>
             <div class="segment seg-2"></div>
@@ -205,145 +181,90 @@
     </div>
 
     <!-- Reasoning -->
-    <div class="card">
-      <div class="section-header">
-        <div class="section-title">ทำไมถึงน่าสงสัย</div>
-      </div>
+    <div class="reasoning-card">
+      <div class="section-title">ทำไมถึงน่าสงสัย</div>
       <div class="reasoning-list">
-        <div class="reasoning-item open" onclick="toggleReasoning(this)">
+        <div class="reasoning-item open" onclick="this.classList.toggle('open')">
           <div class="reasoning-summary">
-            <span class="reasoning-icon">⚠</span>
+            <span>⚠</span>
             <span>WHO ยืนยันอย่างชัดเจนว่าการดื่มน้ำร้อนไม่มีผลต่อการฆ่าเชื้อไวรัส SARS-CoV-2</span>
           </div>
-          <div class="reasoning-detail">องค์การอนามัยโลก (WHO) ได้ออกแถลงการณ์อย่างเป็นทางการระบุว่าไม่มีหลักฐานทางวิทยาศาสตร์ที่สนับสนุนการอ้างว่าการดื่มน้ำร้อนสามารถฆ่าหรือป้องกันเชื้อไวรัสโคโรนาได้ ไวรัสแพร่ผ่านระบบทางเดินหายใจ ไม่ใช่ระบบทางเดินอาหาร</div>
+          <div class="reasoning-detail">องค์การอนามัยโลก (WHO) ได้ออกแถลงการณ์อย่างเป็นทางการระบุว่าไม่มีหลักฐานทางวิทยาศาสตร์ที่สนับสนุนการอ้างว่าการดื่มน้ำร้อนสามารถฆ่าหรือป้องกันเชื้อไวรัสโคโรนาได้</div>
         </div>
-        <div class="reasoning-item" onclick="toggleReasoning(this)">
+        <div class="reasoning-item" onclick="this.classList.toggle('open')">
           <div class="reasoning-summary">
-            <span class="reasoning-icon">!</span>
+            <span>!</span>
             <span>ไม่มีการอ้างอิงงานวิจัยทางคลินิกที่ตรวจสอบได้จากสถาบันการแพทย์จีนใด ๆ</span>
           </div>
-          <div class="reasoning-detail">การค้นหาในฐานข้อมูลงานวิจัย PubMed, ClinicalTrials.gov และ CNKI ไม่พบงานวิจัยที่ตรงกับคำอ้างนี้ การอ้างว่า "แพทย์จีนยืนยัน" โดยไม่ระบุสถาบันหรือชื่อผู้วิจัยเป็นสัญญาณเตือนของข้อมูลเท็จ</div>
+          <div class="reasoning-detail">การค้นหาในฐานข้อมูลงานวิจัย PubMed ไม่พบงานวิจัยที่ตรงกับคำอ้างนี้</div>
         </div>
-        <div class="reasoning-item" onclick="toggleReasoning(this)">
+        <div class="reasoning-item" onclick="this.classList.toggle('open')">
           <div class="reasoning-summary">
-            <span class="reasoning-icon">!</span>
+            <span>!</span>
             <span>เนื้อหาแพร่กระจายจากเว็บไซต์ที่ไม่น่าเชื่อถือ ไม่มีบรรณาธิการตรวจสอบ</span>
           </div>
-          <div class="reasoning-detail">แหล่งต้นฉบับของข้อมูลนี้ปรากฏจากเว็บไซต์ที่ไม่มีผู้รับผิดชอบชัดเจน และถูกตรวจพบในฐานข้อมูลเว็บไซต์น่าสงสัยของระบบ</div>
-        </div>
-        <div class="reasoning-item" onclick="toggleReasoning(this)">
-          <div class="reasoning-summary">
-            <span class="reasoning-icon">?</span>
-            <span>รูปแบบข้อความตรงกับข่าวปลอมที่แพร่ระบาดในช่วงต้นปี 2563</span>
-          </div>
-          <div class="reasoning-detail">ระบบตรวจพบว่าข้อความมีความคล้ายคลึงสูง (92%) กับข่าวปลอมที่ถูกหักล้างโดย AFP Fact Check และ WHO เมื่อเดือนมีนาคม 2563</div>
+          <div class="reasoning-detail">แหล่งต้นฉบับถูกตรวจพบในฐานข้อมูลเว็บไซต์น่าสงสัย</div>
         </div>
       </div>
+      <p class="ai-disclaimer">* ผลการวิเคราะห์นี้มาจาก AI และอาจมีข้อผิดพลาด โปรดใช้วิจารณญาณ</p>
     </div>
 
     <!-- References -->
     <div class="card">
-      <div class="section-header">
-        <div class="section-title">แหล่งอ้างอิง (20 แหล่ง)</div>
-        <select class="ref-sort">
-          <option>เรียงตามความน่าเชื่อถือ</option>
-          <option>เรียงตามวันที่</option>
-          <option>เรียงตามจุดยืน</option>
-        </select>
-      </div>
+      <div class="section-title">แหล่งอ้างอิง (3 แหล่ง)</div>
       <div class="ref-list">
         <div class="ref-item">
           <div class="ref-top">
+            <div class="ref-avatar">W</div>
             <span class="ref-source">WHO</span>
             <span class="source-badge badge-gov">องค์กรรัฐ</span>
             <span class="stance-badge stance-oppose">คัดค้าน</span>
           </div>
-          <div class="ref-excerpt">"There is no evidence that drinking hot water or beverages kills the COVID-19 virus. The virus is transmitted through respiratory droplets, not through the digestive system..."</div>
+          <div class="ref-excerpt">"There is no evidence that drinking hot water or beverages kills the COVID-19 virus..."</div>
           <div class="ref-meta">
             <span>16 มีนาคม 2563</span>
-            <div class="credibility-bar">
-              <div class="cred-bg"><div class="cred-fill" style="width:93%"></div></div>
-              <span>93</span>
-            </div>
-            <a class="ref-link" href="#" target="_blank">อ่านต้นฉบับ →</a>
+            <span>ความน่าเชื่อถือ: 93/100</span>
+            <a class="ref-link" href="#" target="_blank" aria-label="อ่านต้นฉบับจาก WHO">
+              อ่านต้นฉบับ
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+            </a>
           </div>
         </div>
         <div class="ref-item">
           <div class="ref-top">
+            <div class="ref-avatar">A</div>
             <span class="ref-source">AFP Fact Check TH</span>
             <span class="source-badge badge-fact">Fact Checker</span>
             <span class="stance-badge stance-oppose">คัดค้าน</span>
           </div>
-          <div class="ref-excerpt">AFP ตรวจสอบข้อเท็จจริง: ไม่มีหลักฐานว่าการดื่มน้ำร้อนสามารถป้องกันหรือรักษาโรคโควิด-19 ได้ นักวิทยาศาสตร์ยืนยันว่าเป็นข้อมูลเท็จ...</div>
+          <div class="ref-excerpt">AFP ตรวจสอบข้อเท็จจริง: ไม่มีหลักฐานว่าการดื่มน้ำร้อนสามารถป้องกันหรือรักษาโรคโควิด-19 ได้</div>
           <div class="ref-meta">
             <span>18 มีนาคม 2563</span>
-            <div class="credibility-bar">
-              <div class="cred-bg"><div class="cred-fill" style="width:95%"></div></div>
-              <span>95</span>
-            </div>
-            <a class="ref-link" href="#" target="_blank">อ่านต้นฉบับ →</a>
+            <span>ความน่าเชื่อถือ: 95/100</span>
+            <a class="ref-link" href="#" target="_blank" aria-label="อ่านต้นฉบับจาก AFP Fact Check TH">
+              อ่านต้นฉบับ
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+            </a>
           </div>
-        </div>
-        <div class="ref-item">
-          <div class="ref-top">
-            <span class="ref-source">ศูนย์ต่อต้านข่าวปลอม</span>
-            <span class="source-badge badge-gov">องค์กรรัฐ</span>
-            <span class="stance-badge stance-oppose">คัดค้าน</span>
-          </div>
-          <div class="ref-excerpt">กระทรวงสาธารณสุขยืนยัน: การดื่มน้ำร้อนไม่มีประสิทธิภาพในการป้องกันโควิด-19 ประชาชนควรล้างมือและสวมหน้ากากอนามัย...</div>
-          <div class="ref-meta">
-            <span>20 มีนาคม 2563</span>
-            <div class="credibility-bar">
-              <div class="cred-bg"><div class="cred-fill" style="width:88%"></div></div>
-              <span>88</span>
-            </div>
-            <a class="ref-link" href="#" target="_blank">อ่านต้นฉบับ →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Source Analysis -->
-    <div class="card">
-      <div class="section-header">
-        <div class="section-title">วิเคราะห์แหล่งที่มา</div>
-        <span class="risk-badge risk-danger">🔴 อันตราย</span>
-      </div>
-      <div class="domain-info">
-        <div class="domain-stat">
-          <div class="domain-stat-label">โดเมน</div>
-          <div class="domain-stat-value">news-fake-th.com</div>
-        </div>
-        <div class="domain-stat">
-          <div class="domain-stat-label">อายุโดเมน</div>
-          <div class="domain-stat-value">23 วัน ⚠</div>
-        </div>
-        <div class="domain-stat">
-          <div class="domain-stat-label">SSL Certificate</div>
-          <div class="domain-stat-value" style="color:var(--danger)">❌ ไม่มี</div>
-        </div>
-        <div class="domain-stat">
-          <div class="domain-stat-label">WHOIS</div>
-          <div class="domain-stat-value" style="color:var(--warning)">ซ่อนข้อมูล</div>
         </div>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-      <div class="actions">
-        <button class="btn-secondary" onclick="window.location.href='home.html'">← ตรวจสอบใหม่</button>
-        <button class="btn-secondary">🔄 ตรวจสอบอีกครั้ง</button>
-        <button class="btn-secondary">📋 คัดลอกผลลัพธ์</button>
-      </div>
-      <button class="btn-primary">แชร์ผลลัพธ์</button>
+    <div class="card" style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
+      <button class="btn-secondary" onclick="window.location.href='home.html'" aria-label="ตรวจสอบใหม่">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        ตรวจสอบใหม่
+      </button>
+      <button class="btn-secondary" aria-label="ตรวจสอบอีกครั้ง">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+        </svg>
+        ตรวจสอบอีกครั้ง
+      </button>
     </div>
   </div>
-
-  <script>
-    function toggleReasoning(el) {
-      el.classList.toggle('open');
-    }
-  </script>
 </body>
 </html>

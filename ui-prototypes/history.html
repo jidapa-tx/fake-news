@@ -9,237 +9,240 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --primary: #1E40AF;
-      --danger: #DC2626;
-      --verified: #059669;
-      --warning: #D97706;
-      --yellow: #CA8A04;
-      --lime: #65A30D;
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --border: #E2E8F0;
-      --text: #0F172A;
-      --text-secondary: #64748B;
-      --radius: 12px;
+      --color-primary: #1D4ED8;
+      --color-primary-hover: #1E40AF;
+      --color-danger: #B91C1C;
+      --color-verified: #047857;
+      --color-warning: #B45309;
+      --color-surface: #FFFFFF;
+      --color-surface-secondary: #F8FAFC;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #475569;
     }
     @media (prefers-color-scheme: dark) {
-      :root { --bg: #0F172A; --surface: #1E293B; --border: #334155; --text: #F1F5F9; --text-secondary: #94A3B8; }
+      :root { --color-surface: #111827; --color-surface-secondary: #1E293B; --color-border: #1E293B; --color-text-primary: #F1F5F9; --color-text-secondary: #94A3B8; }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    .privacy-banner { background: #EFF6FF; border-bottom: 1px solid #BFDBFE; padding: 8px 16px; text-align: center; font-size: 13px; color: var(--primary); font-weight: 500; }
-    @media (prefers-color-scheme: dark) { .privacy-banner { background: #1e3a5f; border-color: #1E40AF; color: #93C5FD; } }
-    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
-    .logo-text { font-size: 18px; font-weight: 600; color: var(--primary); }
-    nav { display: flex; gap: 4px; align-items: center; }
-    nav a { padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: all 0.15s; }
-    nav a:hover, nav a.active { background: #EFF6FF; color: var(--primary); }
-    .lang-toggle { border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px; font-size: 13px; cursor: pointer; background: var(--surface); color: var(--text); font-family: inherit; margin-left: 8px; }
+    body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--color-surface-secondary); color: var(--color-text-primary); min-height: 100vh; }
+    .skip-link { position: absolute; left: -9999px; top: 0; z-index: 999; background: var(--color-primary); color: white; padding: 8px 16px; font-size: 14px; font-weight: 500; text-decoration: none; }
+    .skip-link:focus { left: 0; }
+    .privacy-banner { background: #F0F9FF; border-bottom: 1px solid #BAE6FD; padding: 8px 16px; text-align: center; font-size: 13px; color: #0369A1; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    @media (prefers-color-scheme: dark) { .privacy-banner { background: #0c1a2e; border-color: #075985; color: #7DD3FC; } }
+    header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--color-border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    @media (prefers-color-scheme: dark) { header { background: rgba(17,24,39,0.85); } }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; flex-shrink: 0; }
+    .logo-icon { width: 36px; height: 36px; flex-shrink: 0; background: var(--color-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+    .logo-text { font-size: 18px; font-weight: 600; color: var(--color-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 480px) { .logo-text { display: none; } }
+    nav { display: flex; align-items: center; }
+    nav a { height: 60px; display: flex; align-items: center; padding: 0 14px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+    nav a:hover { color: var(--color-text-primary); }
+    nav a.active { border-bottom-color: var(--color-primary); color: var(--color-primary); }
     .container { max-width: 760px; margin: 32px auto 48px; padding: 0 16px; }
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
     .page-title { font-size: 22px; font-weight: 600; }
-    .page-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
-    .header-actions { display: flex; gap: 8px; }
-    .btn-sm { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: all 0.15s; }
-    .btn-sm:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-danger { border-color: #FECACA; color: var(--danger); }
-    .btn-danger:hover { background: #FEF2F2; border-color: var(--danger); }
-    /* Filters */
-    .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .search-input {
-      flex: 1; min-width: 200px;
-      padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 10px;
-      font-family: inherit; font-size: 14px; background: var(--surface); color: var(--text); outline: none;
-    }
-    .search-input:focus { border-color: var(--primary); }
-    select.filter-select {
-      padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px;
-      font-family: inherit; font-size: 13px; background: var(--surface); color: var(--text); cursor: pointer; outline: none;
-    }
-    select.filter-select:focus { border-color: var(--primary); }
-    /* Results count */
-    .results-count { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+    .page-subtitle { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-sm { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-primary); transition: all 0.15s; min-height: 44px; }
+    .btn-sm:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .btn-sm:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .btn-danger { border-color: #FECACA; color: var(--color-danger); }
+    .btn-danger:hover { background: #FEF2F2; border-color: var(--color-danger); }
+    /* Search */
+    .search-wrapper { position: relative; margin-bottom: 12px; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-secondary); pointer-events: none; }
+    .search-input { width: 100%; padding: 10px 14px 10px 40px; border: 1.5px solid var(--color-border); border-radius: 12px; font-family: inherit; font-size: 14px; background: var(--color-surface); color: var(--color-text-primary); outline: none; min-height: 44px; }
+    .search-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(29,78,216,0.1); }
+    /* Filter pills */
+    .filter-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+    .filter-pills::-webkit-scrollbar { display: none; }
+    .filter-pill { border-radius: 100px; padding: 6px 14px; font-size: 13px; font-weight: 500; border: 1px solid var(--color-border); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: inherit; white-space: nowrap; min-height: 36px; transition: all 0.15s; }
+    .filter-pill.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    .filter-pill:hover:not(.active) { border-color: var(--color-primary); }
+    .filter-pill:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .results-count { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px; font-variant-numeric: tabular-nums; }
     /* History List */
     .history-list { display: flex; flex-direction: column; gap: 8px; }
     .history-item {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      background: var(--color-surface); border: 1px solid var(--color-border); border-left-width: 4px; border-radius: 12px;
       padding: 14px 16px; display: flex; align-items: center; gap: 12px;
-      transition: all 0.15s; cursor: pointer; text-decoration: none; color: var(--text);
+      transition: all 0.15s; cursor: pointer; text-decoration: none; color: var(--color-text-primary);
     }
-    .history-item:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(30,64,175,0.08); }
-    .type-icon { font-size: 18px; flex-shrink: 0; width: 32px; text-align: center; }
+    .history-item:hover { border-color: var(--color-primary); box-shadow: 0 2px 8px rgba(29,78,216,0.08); }
+    .history-item.verdict-danger { border-left-color: #B91C1C; }
+    .history-item.verdict-suspicious { border-left-color: #B45309; }
+    .history-item.verdict-uncertain { border-left-color: #B45309; }
+    .history-item.verdict-likely { border-left-color: #4D7C0F; }
+    .history-item.verdict-verified { border-left-color: #047857; }
+    .type-icon { flex-shrink: 0; width: 32px; text-align: center; color: var(--color-text-secondary); display: flex; justify-content: center; }
     .item-content { flex: 1; min-width: 0; }
     .item-query { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 3px; }
-    .item-meta { font-size: 12px; color: var(--text-secondary); }
+    .item-meta { font-size: 12px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
     .verdict-badge { padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
-    .badge-danger { background: #FEE2E2; color: var(--danger); }
-    .badge-suspicious { background: #FEF3C7; color: var(--warning); }
-    .badge-uncertain { background: #FEF9C3; color: var(--yellow); }
-    .badge-likely { background: #F0FDF4; color: var(--lime); }
-    .badge-verified { background: #ECFDF5; color: var(--verified); }
-    .score-mini { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
-    .delete-btn { background: none; border: none; cursor: pointer; font-size: 16px; opacity: 0; transition: opacity 0.15s; padding: 4px; border-radius: 6px; color: var(--text-secondary); }
-    .history-item:hover .delete-btn { opacity: 1; }
-    .delete-btn:hover { background: #FEE2E2; color: var(--danger); }
-    /* Empty State */
-    .empty-state { text-align: center; padding: 64px 24px; }
-    .empty-icon { font-size: 48px; margin-bottom: 16px; }
-    .empty-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-    .empty-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
-    .btn-primary { padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
-    /* Pagination hint */
-    .list-footer { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 16px; }
+    .badge-danger { background: #FEE2E2; color: #B91C1C; }
+    .badge-suspicious { background: #FEF3C7; color: #B45309; }
+    .badge-uncertain { background: #FEF9C3; color: #B45309; }
+    .badge-likely { background: #ECFDF5; color: #047857; }
+    .badge-verified { background: #D1FAE5; color: #047857; }
+    .score-mini { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .delete-btn { background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.15s; padding: 4px; border-radius: 6px; color: var(--color-text-secondary); min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+    .history-item:hover .delete-btn, .delete-btn:focus { opacity: 1; }
+    .delete-btn:hover { background: #FEE2E2; color: var(--color-danger); }
+    .delete-btn:focus-visible { outline: 2px solid var(--color-danger); outline-offset: 2px; }
     /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--surface); border-radius: var(--radius); padding: 28px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal { background: var(--color-surface); border-radius: 16px; padding: 28px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
     .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-    .modal-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+    .modal-body { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 20px; }
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-    @media (max-width: 480px) {
-      .filters { flex-direction: column; }
-      .search-input { min-width: 0; }
-    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
   </style>
 </head>
 <body>
-  <div class="privacy-banner">🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server</div>
+  <a href="#main" class="skip-link">ข้ามไปเนื้อหาหลัก</a>
+
+  <div class="privacy-banner">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 010 12c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" />
+    </svg>
+    ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server
+  </div>
 
   <header>
-    <a class="logo" href="home.html">
-      <div class="logo-icon">✓</div>
+    <a class="logo" href="home.html" aria-label="ชัวร์ก่อนแชร์ หน้าหลัก">
+      <div class="logo-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
       <span class="logo-text">ชัวร์ก่อนแชร์</span>
     </a>
-    <nav>
+    <nav aria-label="เมนูหลัก">
       <a href="home.html">หน้าหลัก</a>
       <a href="trending.html">ยอดนิยม</a>
       <a href="history.html" class="active">ประวัติ</a>
-      <button class="lang-toggle">EN</button>
     </nav>
   </header>
 
-  <div class="container">
+  <div id="main" class="container">
     <div class="page-header">
       <div>
         <div class="page-title">ประวัติการตรวจสอบ</div>
         <div class="page-subtitle">เก็บไว้ในเครื่องของคุณเท่านั้น • สูงสุด 100 รายการ</div>
       </div>
       <div class="header-actions">
-        <button class="btn-sm" onclick="exportJSON()">⬇ Export JSON</button>
-        <label class="btn-sm" style="cursor:pointer;">
-          ⬆ Import JSON
+        <button class="btn-sm" onclick="exportJSON()" aria-label="Export JSON">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Export JSON
+        </button>
+        <label class="btn-sm" style="cursor:pointer;" aria-label="Import JSON">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          Import JSON
           <input type="file" accept=".json" style="display:none" onchange="importJSON(this)" />
         </label>
-        <button class="btn-sm btn-danger" onclick="openClearModal()">🗑 ลบทั้งหมด</button>
+        <button class="btn-sm btn-danger" onclick="openClearModal()" aria-label="ลบทั้งหมด">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+          </svg>
+          ลบทั้งหมด
+        </button>
       </div>
     </div>
 
-    <div class="filters">
-      <input class="search-input" type="search" placeholder="🔍 ค้นหาประวัติ..." oninput="filterHistory()" id="search-input" />
-      <select class="filter-select" onchange="filterHistory()" id="verdict-filter">
-        <option value="">ทุกผลลัพธ์</option>
-        <option value="danger">อันตราย</option>
-        <option value="suspicious">น่าสงสัย</option>
-        <option value="uncertain">ไม่แน่ใจ</option>
-        <option value="likely">ค่อนข้างจริง</option>
-        <option value="verified">ยืนยันแล้ว</option>
-      </select>
-      <select class="filter-select" onchange="filterHistory()" id="date-filter">
-        <option value="">ทุกช่วงเวลา</option>
-        <option value="today">วันนี้</option>
-        <option value="week">สัปดาห์นี้</option>
-        <option value="month">เดือนนี้</option>
-      </select>
+    <div class="search-wrapper">
+      <span class="search-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+      </span>
+      <input class="search-input" type="search" placeholder="ค้นหาประวัติ..." oninput="filterHistory()" id="search-input" aria-label="ค้นหาประวัติ" />
+    </div>
+
+    <div class="filter-pills" role="group" aria-label="กรองตามผลลัพธ์">
+      <button class="filter-pill active" onclick="setFilter('', this)">ทุกผลลัพธ์</button>
+      <button class="filter-pill" onclick="setFilter('danger', this)">อันตราย</button>
+      <button class="filter-pill" onclick="setFilter('suspicious', this)">น่าสงสัย</button>
+      <button class="filter-pill" onclick="setFilter('uncertain', this)">ไม่แน่ใจ</button>
+      <button class="filter-pill" onclick="setFilter('likely', this)">ค่อนข้างจริง</button>
+      <button class="filter-pill" onclick="setFilter('verified', this)">ยืนยันแล้ว</button>
     </div>
 
     <div class="results-count" id="results-count">แสดง 7 รายการ</div>
 
     <div class="history-list" id="history-list">
-      <a href="result.html" class="history-item">
-        <span class="type-icon">📝</span>
+      <a href="result.html" class="history-item verdict-danger">
+        <span class="type-icon" aria-label="ข้อความ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369.64.05 1.084.69.858 1.295l-.17.454a2.25 2.25 0 001.955 3.024h.087c1.207 0 2.332-.557 3.081-1.516a9.002 9.002 0 00-2.573-12.508 9.015 9.015 0 00-9.23 1.15A9.002 9.002 0 002.25 12.76z" /></svg>
+        </span>
         <div class="item-content">
           <div class="item-query">ดื่มน้ำร้อนฆ่าไวรัสโคโรนาได้ แพทย์จีนยืนยันผลการทดลองทางคลินิก</div>
           <div class="item-meta">ข้อความ • 2 นาทีที่แล้ว</div>
         </div>
         <span class="verdict-badge badge-danger">อันตราย</span>
         <span class="score-mini">8/100</span>
-        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+        <button class="delete-btn" onclick="deleteItem(event, this)" aria-label="ลบรายการ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+        </button>
       </a>
-      <a href="result.html" class="history-item">
-        <span class="type-icon">🔗</span>
+      <a href="result.html" class="history-item verdict-suspicious">
+        <span class="type-icon" aria-label="URL">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
+        </span>
         <div class="item-content">
           <div class="item-query">https://news-fake-th.com/covid-cure-hot-water</div>
           <div class="item-meta">URL • 15 นาทีที่แล้ว</div>
         </div>
         <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
         <span class="score-mini">32/100</span>
-        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+        <button class="delete-btn" onclick="deleteItem(event, this)" aria-label="ลบรายการ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+        </button>
       </a>
-      <a href="result.html" class="history-item">
-        <span class="type-icon">🖼</span>
+      <a href="result.html" class="history-item verdict-uncertain">
+        <span class="type-icon" aria-label="รูปภาพ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+        </span>
         <div class="item-content">
           <div class="item-query">protest_photo_bangkok.jpg</div>
           <div class="item-meta">รูปภาพ • 1 ชม.ที่แล้ว</div>
         </div>
         <span class="verdict-badge badge-uncertain">ไม่แน่ใจ</span>
         <span class="score-mini">55/100</span>
-        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+        <button class="delete-btn" onclick="deleteItem(event, this)" aria-label="ลบรายการ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+        </button>
       </a>
-      <a href="result.html" class="history-item">
-        <span class="type-icon">📝</span>
+      <a href="result.html" class="history-item verdict-verified">
+        <span class="type-icon" aria-label="ข้อความ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369.64.05 1.084.69.858 1.295l-.17.454a2.25 2.25 0 001.955 3.024h.087c1.207 0 2.332-.557 3.081-1.516a9.002 9.002 0 00-2.573-12.508 9.015 9.015 0 00-9.23 1.15A9.002 9.002 0 002.25 12.76z" /></svg>
+        </span>
         <div class="item-content">
           <div class="item-query">ธนาคารแห่งประเทศไทยขึ้นดอกเบี้ยนโยบาย 0.25% มีผลทันที</div>
           <div class="item-meta">ข้อความ • 3 ชม.ที่แล้ว</div>
         </div>
         <span class="verdict-badge badge-verified">ยืนยันแล้ว</span>
         <span class="score-mini">91/100</span>
-        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
-      </a>
-      <a href="result.html" class="history-item">
-        <span class="type-icon">🔗</span>
-        <div class="item-content">
-          <div class="item-query">https://thaipbs.or.th/news/content/326842</div>
-          <div class="item-meta">URL • เมื่อวาน</div>
-        </div>
-        <span class="verdict-badge badge-likely">ค่อนข้างจริง</span>
-        <span class="score-mini">76/100</span>
-        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
-      </a>
-      <a href="result.html" class="history-item">
-        <span class="type-icon">📝</span>
-        <div class="item-content">
-          <div class="item-query">วัคซีนโควิดมีไมโครชิปควบคุมจิตใจ นักวิทยาศาสตร์เปิดเผย</div>
-          <div class="item-meta">ข้อความ • เมื่อวาน</div>
-        </div>
-        <span class="verdict-badge badge-danger">อันตราย</span>
-        <span class="score-mini">3/100</span>
-        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
-      </a>
-      <a href="result.html" class="history-item">
-        <span class="type-icon">🖼</span>
-        <div class="item-content">
-          <div class="item-query">ai_generated_flood.webp</div>
-          <div class="item-meta">รูปภาพ • 3 วันที่แล้ว</div>
-        </div>
-        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
-        <span class="score-mini">28/100</span>
-        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+        <button class="delete-btn" onclick="deleteItem(event, this)" aria-label="ลบรายการ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+        </button>
       </a>
     </div>
-
-    <div class="list-footer">แสดงทั้งหมด 7 จาก 7 รายการ</div>
   </div>
 
   <!-- Clear Modal -->
-  <div class="modal-overlay" id="clear-modal">
+  <div class="modal-overlay" id="clear-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal">
-      <div class="modal-title">ลบประวัติทั้งหมด?</div>
-      <div class="modal-body">การดำเนินการนี้จะลบประวัติการตรวจสอบทั้งหมด 7 รายการออกจากเครื่องของคุณ ไม่สามารถกู้คืนได้</div>
+      <div class="modal-title" id="modal-title">ลบประวัติทั้งหมด?</div>
+      <div class="modal-body">การดำเนินการนี้จะลบประวัติการตรวจสอบทั้งหมดออกจากเครื่องของคุณ ไม่สามารถกู้คืนได้</div>
       <div class="modal-actions">
         <button class="btn-sm" onclick="closeModal()">ยกเลิก</button>
-        <button class="btn-sm btn-danger" onclick="clearAll()" style="background:var(--danger);color:white;border-color:var(--danger);">ลบทั้งหมด</button>
+        <button class="btn-sm btn-danger" onclick="clearAll()" style="background:var(--color-danger);color:white;border-color:var(--color-danger);">ลบทั้งหมด</button>
       </div>
     </div>
   </div>
@@ -247,11 +250,19 @@
   <script>
     function openClearModal() { document.getElementById('clear-modal').classList.add('open'); }
     function closeModal() { document.getElementById('clear-modal').classList.remove('open'); }
-    function clearAll() { document.getElementById('history-list').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">ยังไม่มีประวัติการตรวจสอบ</div><div class="empty-sub">เริ่มตรวจสอบข่าวแรกของคุณได้เลย</div><button class="btn-primary" onclick="location.href=\'home.html\'">เริ่มตรวจสอบ</button></div>'; document.getElementById('results-count').textContent = 'แสดง 0 รายการ'; closeModal(); }
+    function clearAll() {
+      document.getElementById('history-list').innerHTML = '<div style="text-align:center;padding:64px 24px;"><div style="font-size:48px;margin-bottom:16px;">📭</div><div style="font-size:18px;font-weight:600;margin-bottom:8px;">ยังไม่มีประวัติ</div><div style="font-size:14px;color:var(--color-text-secondary);">ลองตรวจสอบข่าวสักชิ้น</div></div>';
+      document.getElementById('results-count').textContent = 'แสดง 0 รายการ';
+      closeModal();
+    }
     function deleteItem(e, btn) { e.preventDefault(); e.stopPropagation(); btn.closest('.history-item').remove(); }
-    function filterHistory() { /* filter logic would be here */ }
-    function exportJSON() { const data = { version: '1.0', exported_at: new Date().toISOString(), items: [] }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'snbs-history.json'; a.click(); }
-    function importJSON(input) { const file = input.files[0]; if (!file) return; alert('นำเข้าข้อมูลเรียบร้อย (MVP: ตัวอย่าง)'); }
+    function setFilter(val, btn) {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    function filterHistory() {}
+    function exportJSON() { const blob = new Blob([JSON.stringify({ version: '1.0', exported_at: new Date().toISOString(), items: [] }, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'snbs-history.json'; a.click(); }
+    function importJSON(input) { alert('นำเข้าข้อมูลเรียบร้อย (MVP: ตัวอย่าง)'); }
   </script>
 </body>
 </html>

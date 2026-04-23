@@ -71,12 +71,17 @@ This app is a Thai civic/government fact-checking tool. Apply the Accessible & E
 **Remove**: Sticky privacy banner emoji `🔒` — replace with ShieldCheckIcon (heroicon)
 **Update**: Privacy banner bg light: `#EFF6FF` → `#F0F9FF`; border-bottom: 1px solid #BAE6FD
 **Header**: Add `backdrop-filter: blur(12px)` + `background: rgba(255,255,255,0.85)` for sticky scroll — glassmorphism header only
+**Logo overflow fix**: On small screens the logo text/icon must not overflow — constrain with `min-w-0`, logo text truncate (`truncate` or `overflow-hidden`), or hide text and show icon-only below a breakpoint (e.g. `sm:hidden` on wordmark). Ensure header stays single-row at all screen widths.
 **Nav active state**: 2px bottom border (primary color) instead of bg highlight
 **Add skip-to-main link**: `<a href="#main" class="sr-only focus:not-sr-only">ข้ามไปเนื้อหาหลัก</a>`
 
 ---
 
 ### home.html
+
+**Remove**:
+- Delete the language toggle/change language button entirely (no language switcher in the UI)
+- Delete the 3 stat boxes below the input card: "ข่าวที่ตรวจสอบแล้ว" (12,847), "พบข้อมูลน่าสงสัย" (73%), "แหล่งข้อมูลที่เชื่อถือได้" (22+) — remove the entire stats row/grid
 
 **Hero section**:
 - Replace solid gradient with: dark navy `#0F172A` bg + subtle radial glow at center (primary blue, opacity 15%) + Thai text pattern SVG watermark (opacity 3%)

@@ -18,7 +18,10 @@ docker compose up        # starts app (port 3000) + db (PostgreSQL)
 npm run dev              # dev server only (requires DB running)
 npm run db:seed          # seed DB with trusted sources, fake claims, suspicious domains
 npm test                 # Vitest unit tests
+npm run test:integration # HTTP integration tests against localhost:3000
 ```
+
+Integration tests live under `tests/integration/` and hit the running dev server. Rows are tagged with `__test__` and cleaned up automatically. See `vitest.integration.config.ts`.
 
 ## Key Conventions
 - All API errors: `{ error: { code, message_th, message_en } }` — never raw stack traces

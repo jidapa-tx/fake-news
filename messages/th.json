@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "home": "หน้าหลัก",
+    "trending": "ยอดนิยม",
+    "history": "ประวัติ"
+  },
+  "privacy": "🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server",
+  "home": {
+    "hero_title": "ตรวจสอบข่าวก่อนส่งต่อ",
+    "hero_sub": "เพราะข่าวปลอมแพร่เร็วกว่าที่คุณคิด — ตรวจสอบด้วย AI และแหล่งข้อมูลที่น่าเชื่อถือ",
+    "tab_text": "ข้อความ",
+    "tab_url": "URL",
+    "tab_image": "รูปภาพ",
+    "text_placeholder": "วางข้อความหรือเนื้อหาข่าวที่ต้องการตรวจสอบ...",
+    "url_placeholder": "https://example.com/news/article",
+    "url_hint": "ใส่ URL ของข่าวที่ต้องการตรวจสอบ ระบบจะวิเคราะห์ทั้งเนื้อหาและความน่าเชื่อถือของเว็บไซต์",
+    "submit": "ตรวจสอบ",
+    "recent_checks": "ตรวจสอบล่าสุด",
+    "upload_text": "คลิกหรือลากไฟล์รูปภาพมาวางที่นี่",
+    "upload_hint": "รองรับ JPG, PNG, WEBP — ขนาดสูงสุด 10 MB"
+  },
+  "verdict": {
+    "DANGEROUS": "อันตราย",
+    "SUSPICIOUS": "น่าสงสัย",
+    "UNCERTAIN": "ไม่แน่ใจ",
+    "LIKELY_TRUE": "ค่อนข้างจริง",
+    "VERIFIED": "ยืนยันแล้ว"
+  },
+  "stance": {
+    "SUPPORTING": "ยืนยัน",
+    "OPPOSING": "คัดค้าน",
+    "NEUTRAL": "เป็นกลาง"
+  },
+  "source_type": {
+    "TRUSTED_MEDIA": "สื่อน่าเชื่อถือ",
+    "FACT_CHECKER": "Fact Checker",
+    "ACADEMIC": "วิชาการ",
+    "GOV": "องค์กรรัฐ",
+    "UNKNOWN": "ไม่ทราบ"
+  },
+  "result": {
+    "query_label": "ข้อความที่ตรวจสอบ",
+    "last_check": "ตรวจครั้งล่าสุด",
+    "score": "คะแนน",
+    "ai_confidence": "AI confidence",
+    "ai_warning": "⚠ AI ยังไม่มั่นใจในผลนี้ กรุณาตรวจสอบเพิ่มเติม",
+    "why_suspicious": "ทำไมถึงน่าสงสัย",
+    "references": "แหล่งอ้างอิง",
+    "source_analysis": "วิเคราะห์แหล่งที่มา",
+    "sort_credibility": "เรียงตามความน่าเชื่อถือ",
+    "sort_date": "เรียงตามวันที่",
+    "sort_stance": "เรียงตามจุดยืน",
+    "read_original": "อ่านต้นฉบับ →",
+    "re_check": "ตรวจสอบอีกครั้ง",
+    "new_check": "← ตรวจสอบใหม่",
+    "copy_result": "คัดลอกผลลัพธ์",
+    "share": "แชร์ผลลัพธ์",
+    "supporting": "สนับสนุน",
+    "opposing": "คัดค้าน",
+    "neutral": "ไม่แน่ใจ"
+  },
+  "history": {
+    "title": "ประวัติการตรวจสอบ",
+    "subtitle": "เก็บไว้ในเครื่องของคุณเท่านั้น • สูงสุด 100 รายการ",
+    "export": "Export JSON",
+    "import": "Import JSON",
+    "clear_all": "ลบทั้งหมด",
+    "search": "ค้นหาประวัติ...",
+    "all_verdicts": "ทุกผลลัพธ์",
+    "all_dates": "ทุกช่วงเวลา",
+    "today": "วันนี้",
+    "this_week": "สัปดาห์นี้",
+    "this_month": "เดือนนี้",
+    "confirm_clear": "ลบประวัติทั้งหมด?",
+    "confirm_body": "การดำเนินการนี้จะลบประวัติการตรวจสอบทั้งหมดออกจากเครื่องของคุณ ไม่สามารถกู้คืนได้",
+    "cancel": "ยกเลิก",
+    "empty_title": "ยังไม่มีประวัติการตรวจสอบ",
+    "empty_sub": "เริ่มตรวจสอบข่าวแรกของคุณได้เลย",
+    "start": "เริ่มตรวจสอบ"
+  },
+  "trending": {
+    "title": "ข่าวที่ถูกตรวจสอบมากที่สุด",
+    "subtitle": "อัปเดตทุก 15 นาที — ข้อมูลรวมไม่ระบุตัวตน",
+    "today": "วันนี้",
+    "this_week": "สัปดาห์นี้",
+    "this_month": "เดือนนี้",
+    "privacy_notice": "ข้อมูลเป็นสถิติรวม ไม่มีการเก็บข้อมูลผู้ใช้",
+    "checks": "ครั้ง"
+  },
+  "errors": {
+    "VALIDATION_ERROR": "ข้อมูลที่ส่งมาไม่ถูกต้อง",
+    "TEXT_TOO_LONG": "ข้อความยาวเกิน 5,000 ตัวอักษร",
+    "INVALID_URL": "รูปแบบ URL ไม่ถูกต้อง",
+    "FILE_TOO_LARGE": "ไฟล์มีขนาดเกิน 10 MB",
+    "UNSUPPORTED_TYPE": "ประเภทไฟล์ไม่รองรับ รองรับเฉพาะ JPG, PNG, WEBP",
+    "RATE_LIMITED": "คุณส่งคำขอเร็วเกินไป กรุณารอสักครู่",
+    "INTERNAL_ERROR": "เกิดข้อผิดพลาดภายในระบบ"
+  }
+}

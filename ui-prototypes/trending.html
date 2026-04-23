@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ข่าวยอดนิยม — ชัวร์ก่อนแชร์</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1E40AF;
+      --danger: #DC2626;
+      --verified: #059669;
+      --warning: #D97706;
+      --yellow: #CA8A04;
+      --lime: #65A30D;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-secondary: #64748B;
+      --radius: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #0F172A; --surface: #1E293B; --border: #334155; --text: #F1F5F9; --text-secondary: #94A3B8; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .privacy-banner { background: #EFF6FF; border-bottom: 1px solid #BFDBFE; padding: 8px 16px; text-align: center; font-size: 13px; color: var(--primary); font-weight: 500; }
+    @media (prefers-color-scheme: dark) { .privacy-banner { background: #1e3a5f; border-color: #1E40AF; color: #93C5FD; } }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
+    .logo-text { font-size: 18px; font-weight: 600; color: var(--primary); }
+    nav { display: flex; gap: 4px; align-items: center; }
+    nav a { padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: all 0.15s; }
+    nav a:hover, nav a.active { background: #EFF6FF; color: var(--primary); }
+    .lang-toggle { border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px; font-size: 13px; cursor: pointer; background: var(--surface); color: var(--text); font-family: inherit; margin-left: 8px; }
+    .container { max-width: 760px; margin: 32px auto 48px; padding: 0 16px; }
+    /* Page Header */
+    .page-header { margin-bottom: 24px; }
+    .page-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+    .page-subtitle { font-size: 13px; color: var(--text-secondary); }
+    /* Period Tabs */
+    .period-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; width: fit-content; margin-bottom: 20px; }
+    .period-tab { padding: 7px 18px; border-radius: 8px; border: none; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; background: transparent; color: var(--text-secondary); transition: all 0.15s; }
+    .period-tab.active { background: var(--primary); color: white; }
+    /* Privacy notice */
+    .privacy-notice { background: #F8FAFC; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    @media (prefers-color-scheme: dark) { .privacy-notice { background: #1E293B; } }
+    /* Trending List */
+    .trending-list { display: flex; flex-direction: column; gap: 6px; }
+    .trending-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; text-decoration: none; color: var(--text); transition: all 0.15s;
+    }
+    .trending-item:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(30,64,175,0.08); }
+    .trending-item.top-3 { border-left: 3px solid var(--primary); }
+    .rank { font-size: 16px; font-weight: 600; color: var(--text-secondary); width: 28px; text-align: center; flex-shrink: 0; }
+    .rank-1 { color: #F59E0B; }
+    .rank-2 { color: #9CA3AF; }
+    .rank-3 { color: #B45309; }
+    .item-content { flex: 1; min-width: 0; }
+    .item-query { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 4px; }
+    .item-meta { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-secondary); }
+    .check-count { font-weight: 500; }
+    .trend-up { color: var(--verified); }
+    .trend-down { color: var(--danger); }
+    .trend-same { color: var(--text-secondary); }
+    .verdict-badge { padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+    .badge-danger { background: #FEE2E2; color: var(--danger); }
+    .badge-suspicious { background: #FEF3C7; color: var(--warning); }
+    .badge-uncertain { background: #FEF9C3; color: var(--yellow); }
+    .badge-likely { background: #F0FDF4; color: var(--lime); }
+    .badge-verified { background: #ECFDF5; color: var(--verified); }
+    /* Summary cards */
+    .summary-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+    .summary-number { font-size: 22px; font-weight: 600; color: var(--primary); }
+    .summary-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    /* Section divider */
+    .section-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; padding: 6px 0 4px; }
+    @media (max-width: 480px) {
+      .summary-row { grid-template-columns: repeat(3,1fr); }
+      .period-tabs { width: 100%; }
+      .period-tab { flex: 1; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="privacy-banner">🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server</div>
+
+  <header>
+    <a class="logo" href="home.html">
+      <div class="logo-icon">✓</div>
+      <span class="logo-text">ชัวร์ก่อนแชร์</span>
+    </a>
+    <nav>
+      <a href="home.html">หน้าหลัก</a>
+      <a href="trending.html" class="active">ยอดนิยม</a>
+      <a href="history.html">ประวัติ</a>
+      <button class="lang-toggle">EN</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="page-title">🔥 ข่าวที่ถูกตรวจสอบมากที่สุด</div>
+      <div class="page-subtitle">อัปเดตทุก 15 นาที — ข้อมูลรวมไม่ระบุตัวตน</div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card">
+        <div class="summary-number">1,284</div>
+        <div class="summary-label">ตรวจสอบวันนี้</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-number" style="color:var(--danger)">68%</div>
+        <div class="summary-label">พบข้อมูลเท็จ/น่าสงสัย</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-number">47</div>
+        <div class="summary-label">หัวข้อกำลังระบาด</div>
+      </div>
+    </div>
+
+    <div class="period-tabs">
+      <button class="period-tab active" onclick="switchPeriod('day', this)">วันนี้</button>
+      <button class="period-tab" onclick="switchPeriod('week', this)">สัปดาห์นี้</button>
+      <button class="period-tab" onclick="switchPeriod('month', this)">เดือนนี้</button>
+    </div>
+
+    <div class="privacy-notice">
+      🔐 ข้อมูลเป็นสถิติรวม ไม่มีการเก็บข้อมูลผู้ใช้ — เฉพาะจำนวนครั้งที่ตรวจสอบและผลลัพธ์เท่านั้น
+    </div>
+
+    <div class="section-label">อันดับ 1–10</div>
+    <div class="trending-list" id="trending-list">
+      <a href="result.html" class="trending-item top-3">
+        <span class="rank rank-1">🥇</span>
+        <div class="item-content">
+          <div class="item-query">ดื่มน้ำร้อนฆ่าไวรัสโคโรนาได้ แพทย์จีนยืนยันผลการทดลอง</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 892 ครั้ง</span>
+            <span class="trend-up">▲ +340%</span>
+            <span>อัปเดต 5 นาทีที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-danger">อันตราย</span>
+      </a>
+      <a href="result.html" class="trending-item top-3">
+        <span class="rank rank-2">🥈</span>
+        <div class="item-content">
+          <div class="item-query">วัคซีนโควิดมีไมโครชิปของบิล เกตส์ ฝังในร่างกาย</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 654 ครั้ง</span>
+            <span class="trend-up">▲ +128%</span>
+            <span>อัปเดต 12 นาทีที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-danger">อันตราย</span>
+      </a>
+      <a href="result.html" class="trending-item top-3">
+        <span class="rank rank-3">🥉</span>
+        <div class="item-content">
+          <div class="item-query">รัฐบาลเตรียมออกกฎหมายห้ามใช้เงินสดทั่วประเทศภายในปี 2568</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 421 ครั้ง</span>
+            <span class="trend-up">▲ +89%</span>
+            <span>อัปเดต 18 นาทีที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">4</span>
+        <div class="item-content">
+          <div class="item-query">ไทยพีบีเอสถูกปิด รัฐบาลสั่งยุติการออกอากาศ</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 318 ครั้ง</span>
+            <span class="trend-down">▼ -12%</span>
+            <span>อัปเดต 1 ชม.ที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-danger">อันตราย</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">5</span>
+        <div class="item-content">
+          <div class="item-query">ธนาคารแห่งประเทศไทยประกาศขึ้นดอกเบี้ยนโยบาย 0.5%</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 287 ครั้ง</span>
+            <span class="trend-same">— ไม่เปลี่ยน</span>
+            <span>อัปเดต 2 ชม.ที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-verified">ยืนยันแล้ว</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">6</span>
+        <div class="item-content">
+          <div class="item-query">น้ำท่วมกรุงเทพฯ ระดับน้ำสูง 2 เมตร รูปภาพจาก AI</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 244 ครั้ง</span>
+            <span class="trend-up">▲ +210%</span>
+            <span>อัปเดต 3 ชม.ที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">7</span>
+        <div class="item-content">
+          <div class="item-query">กินกระเทียมวันละ 10 กลีบป้องกันโรคมะเร็งได้ 100%</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 198 ครั้ง</span>
+            <span class="trend-down">▼ -8%</span>
+            <span>อัปเดต 4 ชม.ที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-uncertain">ไม่แน่ใจ</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">8</span>
+        <div class="item-content">
+          <div class="item-query">ค่าไฟฟ้าเดือนหน้าจะพุ่งสูงถึง 10 บาทต่อหน่วย</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 176 ครั้ง</span>
+            <span class="trend-up">▲ +45%</span>
+            <span>อัปเดต 5 ชม.ที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">9</span>
+        <div class="item-content">
+          <div class="item-query">สุวรรณภูมิประกาศปิดรันเวย์กระทันหัน เที่ยวบินยกเลิก 200 เที่ยว</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 154 ครั้ง</span>
+            <span class="trend-same">— ไม่เปลี่ยน</span>
+            <span>อัปเดต 6 ชม.ที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-likely">ค่อนข้างจริง</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">10</span>
+        <div class="item-content">
+          <div class="item-query">พบยารักษาโรคมะเร็งจากพืชไทย นักวิจัยจุฬาฯ เผยผลสำเร็จ</div>
+          <div class="item-meta">
+            <span class="check-count">🔍 132 ครั้ง</span>
+            <span class="trend-up">▲ +15%</span>
+            <span>อัปเดต 8 ชม.ที่แล้ว</span>
+          </div>
+        </div>
+        <span class="verdict-badge badge-uncertain">ไม่แน่ใจ</span>
+      </a>
+
+      <div class="section-label" style="margin-top:8px;">อันดับ 11–20</div>
+
+      <a href="result.html" class="trending-item">
+        <span class="rank">11</span>
+        <div class="item-content">
+          <div class="item-query">แอปพลิเคชั่นของรัฐบาลแอบดูดข้อมูลส่วนตัวผู้ใช้</div>
+          <div class="item-meta"><span class="check-count">🔍 118 ครั้ง</span><span class="trend-up">▲ +33%</span></div>
+        </div>
+        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
+      </a>
+      <a href="result.html" class="trending-item">
+        <span class="rank">12</span>
+        <div class="item-content">
+          <div class="item-query">ฝนกรดตกในกรุงเทพฯ อันตรายถึงชีวิต</div>
+          <div class="item-meta"><span class="check-count">🔍 104 ครั้ง</span><span class="trend-down">▼ -22%</span></div>
+        </div>
+        <span class="verdict-badge badge-danger">อันตราย</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function switchPeriod(period, btn) {
+      document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

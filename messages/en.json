@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "home": "Home",
+    "trending": "Trending",
+    "history": "History"
+  },
+  "privacy": "🔒 Your data is stored locally only. Nothing is sent to a server.",
+  "home": {
+    "hero_title": "Verify News Before You Share",
+    "hero_sub": "Fake news spreads faster than you think — verify with AI and trusted sources",
+    "tab_text": "Text",
+    "tab_url": "URL",
+    "tab_image": "Image",
+    "text_placeholder": "Paste the news text or content you want to verify...",
+    "url_placeholder": "https://example.com/news/article",
+    "url_hint": "Enter the URL of the news. The system will analyze both the content and the website credibility.",
+    "submit": "Verify",
+    "recent_checks": "Recent Checks",
+    "upload_text": "Click or drag an image file here",
+    "upload_hint": "Supports JPG, PNG, WEBP — max 10 MB"
+  },
+  "verdict": {
+    "DANGEROUS": "Dangerous",
+    "SUSPICIOUS": "Suspicious",
+    "UNCERTAIN": "Uncertain",
+    "LIKELY_TRUE": "Likely True",
+    "VERIFIED": "Verified"
+  },
+  "stance": {
+    "SUPPORTING": "Supporting",
+    "OPPOSING": "Opposing",
+    "NEUTRAL": "Neutral"
+  },
+  "source_type": {
+    "TRUSTED_MEDIA": "Trusted Media",
+    "FACT_CHECKER": "Fact Checker",
+    "ACADEMIC": "Academic",
+    "GOV": "Government",
+    "UNKNOWN": "Unknown"
+  },
+  "result": {
+    "query_label": "Analyzed content",
+    "last_check": "Last checked",
+    "score": "Score",
+    "ai_confidence": "AI confidence",
+    "ai_warning": "⚠ AI is not confident in this result. Please verify further.",
+    "why_suspicious": "Why is this suspicious?",
+    "references": "References",
+    "source_analysis": "Source Analysis",
+    "sort_credibility": "Sort by credibility",
+    "sort_date": "Sort by date",
+    "sort_stance": "Sort by stance",
+    "read_original": "Read original →",
+    "re_check": "Re-verify",
+    "new_check": "← New check",
+    "copy_result": "Copy result",
+    "share": "Share result",
+    "supporting": "Supporting",
+    "opposing": "Opposing",
+    "neutral": "Neutral"
+  },
+  "history": {
+    "title": "Verification History",
+    "subtitle": "Stored locally only • Max 100 entries",
+    "export": "Export JSON",
+    "import": "Import JSON",
+    "clear_all": "Clear all",
+    "search": "Search history...",
+    "all_verdicts": "All verdicts",
+    "all_dates": "All time",
+    "today": "Today",
+    "this_week": "This week",
+    "this_month": "This month",
+    "confirm_clear": "Clear all history?",
+    "confirm_body": "This will permanently delete all verification history from your device. This cannot be undone.",
+    "cancel": "Cancel",
+    "empty_title": "No verification history yet",
+    "empty_sub": "Start by verifying your first news item",
+    "start": "Get started"
+  },
+  "trending": {
+    "title": "Most Checked News",
+    "subtitle": "Updated every 15 minutes — anonymized aggregate data",
+    "today": "Today",
+    "this_week": "This week",
+    "this_month": "This month",
+    "privacy_notice": "Data is aggregated statistics only. No personal data is collected.",
+    "checks": "checks"
+  },
+  "errors": {
+    "VALIDATION_ERROR": "Invalid input data",
+    "TEXT_TOO_LONG": "Text exceeds 5,000 characters",
+    "INVALID_URL": "Invalid URL format",
+    "FILE_TOO_LARGE": "File size exceeds 10 MB",
+    "UNSUPPORTED_TYPE": "Unsupported file type. Only JPG, PNG, WEBP allowed",
+    "RATE_LIMITED": "Too many requests. Please wait a moment",
+    "INTERNAL_ERROR": "Internal server error"
+  }
+}

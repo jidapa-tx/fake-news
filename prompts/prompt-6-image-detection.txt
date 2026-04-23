@@ -1,0 +1,11 @@
+Implement Phase 4 — AI-Generated Image Detection via Google Gemini — per @docs/requirement.md (FR.5) and @docs/technical-spec.md.
+
+**Tasks:**
+1. `lib/gemini.ts` — Gemini client using `gemini-2.5-flash`, `analyzeImageForAI(base64, mimeType)` → `GeminiImageResult`, graceful fallback on API failure
+2. `app/api/analyze/image/route.ts` — multipart upload, Zod validation (max 10MB, JPG/PNG/WEBP), EXIF extraction (exifr), call Gemini, save Analysis to DB
+3. `components/ImageUpload.tsx` — drag-and-drop + file picker, preview thumbnail, Thai validation errors
+4. Result page — AI probability gauge, detectedModel badge, reasoning bullets, EXIF metadata grid, mock reverse image search with "(MVP)" label
+5. History — image entries show camera icon, queryType: "image"
+
+**After implementation:**
+Update `docs/technical-spec.md` with the final Gemini prompt template used and response parsing logic.

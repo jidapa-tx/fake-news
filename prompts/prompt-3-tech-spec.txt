@@ -1,0 +1,12 @@
+Read @docs/requirement.md, @docs/data-schema.md and all files in @ui-prototypes/ then create `docs/technical-spec.md` as the single source of truth for all developers.
+
+Include an architecture section covering the two Docker Compose services: `app` (Next.js 14, port 3000), `db` (PostgreSQL 15 + Prisma). Only external dependency: Google Gemini API.
+
+Project-specific constraints to document precisely:
+- API endpoints: POST /api/analyze/text, POST /api/analyze/image, POST /api/analyze/source, GET /api/trending, GET /api/references/:analysisId, GET /api/health
+- All errors: `{ error: { code, message_th, message_en } }` — never raw stack traces
+- All inputs validated with Zod
+- Rate limiting: 30 req/min per IP
+- Gemini integration: model `gemini-2.5-flash`, prompt template for AI image detection, response parsing into `{ aiProbability, detectedModel, reasoning[], metadata }`, graceful fallback on API failure
+- Shared TypeScript enums: VerdictLevel, Stance, SourceType
+- Environment variables: DATABASE_URL, GEMINI_API_KEY

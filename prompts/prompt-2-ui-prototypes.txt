@@ -1,0 +1,14 @@
+Read `docs/requirement.md` and create standalone HTML prototypes in `/ui-prototypes/`:
+- `home.html` — input tabs (Text/URL/Image), ตรวจสอบ button, privacy banner
+- `result.html` — credibility score, 5-level bar, stat cards, AI confidence, reasoning bullets, reference list
+- `history.html` — history list, search/filter, export/import JSON, clear all
+- `trending.html` — top 20 list, period selector, verdict badges
+
+Design tokens:
+- Colors: #1E40AF (primary), #DC2626 (danger), #059669 (verified), #D97706 (warning), #CA8A04 (yellow), #65A30D (lime)
+- Font: IBM Plex Sans Thai from Google Fonts (400/500/600)
+- Style: Card UI, gradient background, professional news tone
+
+Each file: no external dependencies except Google Fonts CDN, responsive (min 360px), dark mode via `prefers-color-scheme`, interactive tabs/filters with inline JS, realistic Thai mock data, privacy banner on every page: "🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server"
+
+After creating all prototypes, save a screen-by-screen UX summary to `docs/ui-requirement.md` describing interactions, Thai labels, and user flows — to serve as the design reference for implementation.

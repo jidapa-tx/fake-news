@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ชัวร์ก่อนแชร์ — ตรวจสอบข่าว</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1E40AF;
+      --primary-light: #3B82F6;
+      --danger: #DC2626;
+      --verified: #059669;
+      --warning: #D97706;
+      --yellow: #CA8A04;
+      --lime: #65A30D;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-secondary: #64748B;
+      --radius: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0F172A;
+        --surface: #1E293B;
+        --border: #334155;
+        --text: #F1F5F9;
+        --text-secondary: #94A3B8;
+        --primary-light: #60A5FA;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    /* Privacy Banner */
+    .privacy-banner {
+      background: #EFF6FF;
+      border-bottom: 1px solid #BFDBFE;
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 500;
+    }
+    @media (prefers-color-scheme: dark) {
+      .privacy-banner { background: #1e3a5f; border-color: #1E40AF; color: #93C5FD; }
+    }
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px;
+    }
+    .logo-text { font-size: 18px; font-weight: 600; color: var(--primary); }
+    nav { display: flex; gap: 4px; align-items: center; }
+    nav a {
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+    }
+    nav a:hover, nav a.active { background: #EFF6FF; color: var(--primary); }
+    .lang-toggle {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      margin-left: 8px;
+    }
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 50%, #2563EB 100%);
+      padding: 56px 24px 48px;
+      text-align: center;
+      color: white;
+    }
+    .hero h1 { font-size: 32px; font-weight: 600; margin-bottom: 12px; }
+    .hero p { font-size: 16px; opacity: 0.85; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+    /* Main Card */
+    .container { max-width: 720px; margin: -32px auto 48px; padding: 0 16px; }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 28px;
+    }
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; background: var(--bg); border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+    .tab {
+      flex: 1; padding: 9px; border-radius: 8px; border: none;
+      font-family: inherit; font-size: 14px; font-weight: 500;
+      cursor: pointer; background: transparent; color: var(--text-secondary);
+      transition: all 0.15s;
+    }
+    .tab.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    /* Input Panels */
+    .panel { display: none; }
+    .panel.active { display: block; }
+    textarea {
+      width: 100%; min-height: 140px; padding: 14px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: inherit; font-size: 15px; resize: vertical;
+      background: var(--bg); color: var(--text);
+      transition: border-color 0.15s; outline: none;
+    }
+    textarea:focus { border-color: var(--primary); }
+    .char-count { text-align: right; font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+    .url-input {
+      width: 100%; padding: 14px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: inherit; font-size: 15px;
+      background: var(--bg); color: var(--text);
+      outline: none; transition: border-color 0.15s;
+    }
+    .url-input:focus { border-color: var(--primary); }
+    .url-hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+    /* Image Upload */
+    .upload-zone {
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 48px 24px; text-align: center; cursor: pointer;
+      transition: all 0.15s; background: var(--bg);
+    }
+    .upload-zone:hover { border-color: var(--primary); background: #EFF6FF; }
+    .upload-icon { font-size: 40px; margin-bottom: 12px; }
+    .upload-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .upload-hint { font-size: 13px; color: var(--text-secondary); }
+    input[type="file"] { display: none; }
+    /* Submit Button */
+    .btn-primary {
+      width: 100%; padding: 14px;
+      background: var(--primary); color: white;
+      border: none; border-radius: 10px;
+      font-family: inherit; font-size: 16px; font-weight: 600;
+      cursor: pointer; margin-top: 16px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #1D4ED8; }
+    .btn-primary:disabled { background: #94A3B8; cursor: not-allowed; }
+    /* Stats row */
+    .stats-row { display: flex; gap: 16px; margin-top: 32px; }
+    .stat-card {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px; text-align: center;
+    }
+    .stat-number { font-size: 24px; font-weight: 600; color: var(--primary); }
+    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    /* Recent checks */
+    .section-title { font-size: 16px; font-weight: 600; margin: 32px 0 12px; }
+    .check-list { display: flex; flex-direction: column; gap: 8px; }
+    .check-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: 10px;
+      cursor: pointer; transition: all 0.15s;
+      text-decoration: none; color: var(--text);
+    }
+    .check-item:hover { border-color: var(--primary); background: #EFF6FF; }
+    .verdict-badge {
+      padding: 3px 10px; border-radius: 100px;
+      font-size: 12px; font-weight: 500; white-space: nowrap;
+    }
+    .badge-danger { background: #FEE2E2; color: var(--danger); }
+    .badge-suspicious { background: #FEF3C7; color: var(--warning); }
+    .badge-uncertain { background: #FEF9C3; color: var(--yellow); }
+    .badge-likely { background: #F0FDF4; color: var(--lime); }
+    .badge-verified { background: #ECFDF5; color: var(--verified); }
+    .check-query { flex: 1; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .check-time { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 24px; }
+      .stats-row { flex-wrap: wrap; }
+      nav a { padding: 6px 8px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="privacy-banner">🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server</div>
+
+  <header>
+    <a class="logo" href="home.html">
+      <div class="logo-icon">✓</div>
+      <span class="logo-text">ชัวร์ก่อนแชร์</span>
+    </a>
+    <nav>
+      <a href="home.html" class="active">หน้าหลัก</a>
+      <a href="trending.html">ยอดนิยม</a>
+      <a href="history.html">ประวัติ</a>
+      <button class="lang-toggle" onclick="toggleLang(this)">EN</button>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>ตรวจสอบข่าวก่อนส่งต่อ</h1>
+    <p>เพราะข่าวปลอมแพร่เร็วกว่าที่คุณคิด — ตรวจสอบด้วย AI และแหล่งข้อมูลที่น่าเชื่อถือ</p>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('text', this)">📝 ข้อความ</button>
+        <button class="tab" onclick="switchTab('url', this)">🔗 URL</button>
+        <button class="tab" onclick="switchTab('image', this)">🖼 รูปภาพ</button>
+      </div>
+
+      <div id="panel-text" class="panel active">
+        <textarea id="text-input" placeholder="วางข้อความหรือเนื้อหาข่าวที่ต้องการตรวจสอบ..." maxlength="5000"
+          oninput="updateCharCount(this)"></textarea>
+        <div class="char-count"><span id="char-count">0</span>/5000</div>
+      </div>
+
+      <div id="panel-url" class="panel">
+        <input class="url-input" type="url" placeholder="https://example.com/news/article" id="url-input" />
+        <div class="url-hint">ใส่ URL ของข่าวที่ต้องการตรวจสอบ ระบบจะวิเคราะห์ทั้งเนื้อหาและความน่าเชื่อถือของเว็บไซต์</div>
+      </div>
+
+      <div id="panel-image" class="panel">
+        <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="upload-zone">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">คลิกหรือลากไฟล์รูปภาพมาวางที่นี่</div>
+          <div class="upload-hint">รองรับ JPG, PNG, WEBP — ขนาดสูงสุด 10 MB</div>
+        </div>
+        <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.webp" onchange="handleFile(this)" />
+      </div>
+
+      <button class="btn-primary" onclick="submitCheck()">🔍 ตรวจสอบ</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">12,847</div>
+        <div class="stat-label">ข่าวที่ตรวจสอบแล้ว</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">73%</div>
+        <div class="stat-label">พบข้อมูลน่าสงสัย</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">22+</div>
+        <div class="stat-label">แหล่งข้อมูลที่เชื่อถือได้</div>
+      </div>
+    </div>
+
+    <div class="section-title">ตรวจสอบล่าสุด</div>
+    <div class="check-list">
+      <a href="result.html" class="check-item">
+        <span class="verdict-badge badge-danger">อันตราย</span>
+        <span class="check-query">ดื่มน้ำร้อนฆ่าไวรัสโคโรนาได้ แพทย์จีนยืนยันผล...</span>
+        <span class="check-time">2 นาทีที่แล้ว</span>
+      </a>
+      <a href="result.html" class="check-item">
+        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
+        <span class="check-query">รัฐบาลเตรียมออกกฎหมายห้ามใช้สกุลเงินดิจิตอล...</span>
+        <span class="check-time">15 นาทีที่แล้ว</span>
+      </a>
+      <a href="result.html" class="check-item">
+        <span class="verdict-badge badge-verified">ยืนยันแล้ว</span>
+        <span class="check-query">ธนาคารแห่งประเทศไทยขึ้นดอกเบี้ยนโยบาย 0.25%...</span>
+        <span class="check-time">1 ชม.ที่แล้ว</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    let currentTab = 'text';
+
+    function switchTab(tab, btn) {
+      currentTab = tab;
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('panel-' + tab).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function updateCharCount(el) {
+      document.getElementById('char-count').textContent = el.value.length;
+    }
+
+    function handleFile(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) {
+        alert('ไฟล์มีขนาดเกิน 10 MB กรุณาเลือกไฟล์ใหม่');
+        return;
+      }
+      const zone = document.getElementById('upload-zone');
+      zone.innerHTML = `<div class="upload-icon">✅</div><div class="upload-text">${file.name}</div><div class="upload-hint">${(file.size/1024/1024).toFixed(2)} MB — พร้อมตรวจสอบ</div>`;
+    }
+
+    function submitCheck() {
+      window.location.href = 'result.html';
+    }
+
+    function toggleLang(btn) {
+      btn.textContent = btn.textContent === 'EN' ? 'TH' : 'EN';
+    }
+
+    // Drag and drop
+    const zone = document.getElementById('upload-zone');
+    if (zone) {
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = '#1E40AF'; });
+      zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.style.borderColor = '';
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          document.getElementById('file-input').files = dt.files;
+          handleFile(document.getElementById('file-input'));
+        }
+      });
+    }
+  </script>
+</body>
+</html>

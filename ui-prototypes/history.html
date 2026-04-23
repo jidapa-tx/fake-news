@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ประวัติการตรวจสอบ — ชัวร์ก่อนแชร์</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1E40AF;
+      --danger: #DC2626;
+      --verified: #059669;
+      --warning: #D97706;
+      --yellow: #CA8A04;
+      --lime: #65A30D;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-secondary: #64748B;
+      --radius: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #0F172A; --surface: #1E293B; --border: #334155; --text: #F1F5F9; --text-secondary: #94A3B8; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .privacy-banner { background: #EFF6FF; border-bottom: 1px solid #BFDBFE; padding: 8px 16px; text-align: center; font-size: 13px; color: var(--primary); font-weight: 500; }
+    @media (prefers-color-scheme: dark) { .privacy-banner { background: #1e3a5f; border-color: #1E40AF; color: #93C5FD; } }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
+    .logo-text { font-size: 18px; font-weight: 600; color: var(--primary); }
+    nav { display: flex; gap: 4px; align-items: center; }
+    nav a { padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: all 0.15s; }
+    nav a:hover, nav a.active { background: #EFF6FF; color: var(--primary); }
+    .lang-toggle { border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px; font-size: 13px; cursor: pointer; background: var(--surface); color: var(--text); font-family: inherit; margin-left: 8px; }
+    .container { max-width: 760px; margin: 32px auto 48px; padding: 0 16px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .page-title { font-size: 22px; font-weight: 600; }
+    .page-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+    .header-actions { display: flex; gap: 8px; }
+    .btn-sm { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: all 0.15s; }
+    .btn-sm:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger { border-color: #FECACA; color: var(--danger); }
+    .btn-danger:hover { background: #FEF2F2; border-color: var(--danger); }
+    /* Filters */
+    .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .search-input {
+      flex: 1; min-width: 200px;
+      padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: inherit; font-size: 14px; background: var(--surface); color: var(--text); outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    select.filter-select {
+      padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: inherit; font-size: 13px; background: var(--surface); color: var(--text); cursor: pointer; outline: none;
+    }
+    select.filter-select:focus { border-color: var(--primary); }
+    /* Results count */
+    .results-count { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+    /* History List */
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+      transition: all 0.15s; cursor: pointer; text-decoration: none; color: var(--text);
+    }
+    .history-item:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(30,64,175,0.08); }
+    .type-icon { font-size: 18px; flex-shrink: 0; width: 32px; text-align: center; }
+    .item-content { flex: 1; min-width: 0; }
+    .item-query { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 3px; }
+    .item-meta { font-size: 12px; color: var(--text-secondary); }
+    .verdict-badge { padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+    .badge-danger { background: #FEE2E2; color: var(--danger); }
+    .badge-suspicious { background: #FEF3C7; color: var(--warning); }
+    .badge-uncertain { background: #FEF9C3; color: var(--yellow); }
+    .badge-likely { background: #F0FDF4; color: var(--lime); }
+    .badge-verified { background: #ECFDF5; color: var(--verified); }
+    .score-mini { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .delete-btn { background: none; border: none; cursor: pointer; font-size: 16px; opacity: 0; transition: opacity 0.15s; padding: 4px; border-radius: 6px; color: var(--text-secondary); }
+    .history-item:hover .delete-btn { opacity: 1; }
+    .delete-btn:hover { background: #FEE2E2; color: var(--danger); }
+    /* Empty State */
+    .empty-state { text-align: center; padding: 64px 24px; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .empty-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+    .btn-primary { padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+    /* Pagination hint */
+    .list-footer { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 16px; }
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border-radius: var(--radius); padding: 28px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+    .modal-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    @media (max-width: 480px) {
+      .filters { flex-direction: column; }
+      .search-input { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="privacy-banner">🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server</div>
+
+  <header>
+    <a class="logo" href="home.html">
+      <div class="logo-icon">✓</div>
+      <span class="logo-text">ชัวร์ก่อนแชร์</span>
+    </a>
+    <nav>
+      <a href="home.html">หน้าหลัก</a>
+      <a href="trending.html">ยอดนิยม</a>
+      <a href="history.html" class="active">ประวัติ</a>
+      <button class="lang-toggle">EN</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <div class="page-title">ประวัติการตรวจสอบ</div>
+        <div class="page-subtitle">เก็บไว้ในเครื่องของคุณเท่านั้น • สูงสุด 100 รายการ</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-sm" onclick="exportJSON()">⬇ Export JSON</button>
+        <label class="btn-sm" style="cursor:pointer;">
+          ⬆ Import JSON
+          <input type="file" accept=".json" style="display:none" onchange="importJSON(this)" />
+        </label>
+        <button class="btn-sm btn-danger" onclick="openClearModal()">🗑 ลบทั้งหมด</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <input class="search-input" type="search" placeholder="🔍 ค้นหาประวัติ..." oninput="filterHistory()" id="search-input" />
+      <select class="filter-select" onchange="filterHistory()" id="verdict-filter">
+        <option value="">ทุกผลลัพธ์</option>
+        <option value="danger">อันตราย</option>
+        <option value="suspicious">น่าสงสัย</option>
+        <option value="uncertain">ไม่แน่ใจ</option>
+        <option value="likely">ค่อนข้างจริง</option>
+        <option value="verified">ยืนยันแล้ว</option>
+      </select>
+      <select class="filter-select" onchange="filterHistory()" id="date-filter">
+        <option value="">ทุกช่วงเวลา</option>
+        <option value="today">วันนี้</option>
+        <option value="week">สัปดาห์นี้</option>
+        <option value="month">เดือนนี้</option>
+      </select>
+    </div>
+
+    <div class="results-count" id="results-count">แสดง 7 รายการ</div>
+
+    <div class="history-list" id="history-list">
+      <a href="result.html" class="history-item">
+        <span class="type-icon">📝</span>
+        <div class="item-content">
+          <div class="item-query">ดื่มน้ำร้อนฆ่าไวรัสโคโรนาได้ แพทย์จีนยืนยันผลการทดลองทางคลินิก</div>
+          <div class="item-meta">ข้อความ • 2 นาทีที่แล้ว</div>
+        </div>
+        <span class="verdict-badge badge-danger">อันตราย</span>
+        <span class="score-mini">8/100</span>
+        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+      </a>
+      <a href="result.html" class="history-item">
+        <span class="type-icon">🔗</span>
+        <div class="item-content">
+          <div class="item-query">https://news-fake-th.com/covid-cure-hot-water</div>
+          <div class="item-meta">URL • 15 นาทีที่แล้ว</div>
+        </div>
+        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
+        <span class="score-mini">32/100</span>
+        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+      </a>
+      <a href="result.html" class="history-item">
+        <span class="type-icon">🖼</span>
+        <div class="item-content">
+          <div class="item-query">protest_photo_bangkok.jpg</div>
+          <div class="item-meta">รูปภาพ • 1 ชม.ที่แล้ว</div>
+        </div>
+        <span class="verdict-badge badge-uncertain">ไม่แน่ใจ</span>
+        <span class="score-mini">55/100</span>
+        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+      </a>
+      <a href="result.html" class="history-item">
+        <span class="type-icon">📝</span>
+        <div class="item-content">
+          <div class="item-query">ธนาคารแห่งประเทศไทยขึ้นดอกเบี้ยนโยบาย 0.25% มีผลทันที</div>
+          <div class="item-meta">ข้อความ • 3 ชม.ที่แล้ว</div>
+        </div>
+        <span class="verdict-badge badge-verified">ยืนยันแล้ว</span>
+        <span class="score-mini">91/100</span>
+        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+      </a>
+      <a href="result.html" class="history-item">
+        <span class="type-icon">🔗</span>
+        <div class="item-content">
+          <div class="item-query">https://thaipbs.or.th/news/content/326842</div>
+          <div class="item-meta">URL • เมื่อวาน</div>
+        </div>
+        <span class="verdict-badge badge-likely">ค่อนข้างจริง</span>
+        <span class="score-mini">76/100</span>
+        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+      </a>
+      <a href="result.html" class="history-item">
+        <span class="type-icon">📝</span>
+        <div class="item-content">
+          <div class="item-query">วัคซีนโควิดมีไมโครชิปควบคุมจิตใจ นักวิทยาศาสตร์เปิดเผย</div>
+          <div class="item-meta">ข้อความ • เมื่อวาน</div>
+        </div>
+        <span class="verdict-badge badge-danger">อันตราย</span>
+        <span class="score-mini">3/100</span>
+        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+      </a>
+      <a href="result.html" class="history-item">
+        <span class="type-icon">🖼</span>
+        <div class="item-content">
+          <div class="item-query">ai_generated_flood.webp</div>
+          <div class="item-meta">รูปภาพ • 3 วันที่แล้ว</div>
+        </div>
+        <span class="verdict-badge badge-suspicious">น่าสงสัย</span>
+        <span class="score-mini">28/100</span>
+        <button class="delete-btn" onclick="deleteItem(event, this)">🗑</button>
+      </a>
+    </div>
+
+    <div class="list-footer">แสดงทั้งหมด 7 จาก 7 รายการ</div>
+  </div>
+
+  <!-- Clear Modal -->
+  <div class="modal-overlay" id="clear-modal">
+    <div class="modal">
+      <div class="modal-title">ลบประวัติทั้งหมด?</div>
+      <div class="modal-body">การดำเนินการนี้จะลบประวัติการตรวจสอบทั้งหมด 7 รายการออกจากเครื่องของคุณ ไม่สามารถกู้คืนได้</div>
+      <div class="modal-actions">
+        <button class="btn-sm" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn-sm btn-danger" onclick="clearAll()" style="background:var(--danger);color:white;border-color:var(--danger);">ลบทั้งหมด</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openClearModal() { document.getElementById('clear-modal').classList.add('open'); }
+    function closeModal() { document.getElementById('clear-modal').classList.remove('open'); }
+    function clearAll() { document.getElementById('history-list').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">ยังไม่มีประวัติการตรวจสอบ</div><div class="empty-sub">เริ่มตรวจสอบข่าวแรกของคุณได้เลย</div><button class="btn-primary" onclick="location.href=\'home.html\'">เริ่มตรวจสอบ</button></div>'; document.getElementById('results-count').textContent = 'แสดง 0 รายการ'; closeModal(); }
+    function deleteItem(e, btn) { e.preventDefault(); e.stopPropagation(); btn.closest('.history-item').remove(); }
+    function filterHistory() { /* filter logic would be here */ }
+    function exportJSON() { const data = { version: '1.0', exported_at: new Date().toISOString(), items: [] }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'snbs-history.json'; a.click(); }
+    function importJSON(input) { const file = input.files[0]; if (!file) return; alert('นำเข้าข้อมูลเรียบร้อย (MVP: ตัวอย่าง)'); }
+  </script>
+</body>
+</html>

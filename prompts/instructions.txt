@@ -1,0 +1,23 @@
+== ชัวร์ก่อนแชร์ — FakeNews Project Workflow ==
+
+1. Create project folder, init git, init CLAUDE.md
+2. Create docs/ folder, copy initial-requirement.md into docs/
+3. Run prompt-1  → docs/requirement.md + docs/data-schema.md
+4. Run prompt-2  → ui-prototypes/ (HTML) + docs/ui-requirement.md
+5. Run prompt-3  → docs/technical-spec.md  [Thinking mode, Opus model]
+6. Run prompt-4  → implement Phase 1–3  [Thinking mode, Opus model]
+7. Review build, fix issues
+8. Run prompt-5  → add i18n + update docs
+9. Run prompt-6  → implement Gemini image detection + update tech-spec
+10. Run prompt-7  → code review + fix issues
+11. Run prompt-8  → write + run all tests
+
+== Optional ==
+prompt-9: Update ui-requirement.md if design team revised the prototypes
+
+== Extra ==
+Extra1: [Atlassian MCP] Sync docs to Confluence
+Extra2: [Atlassian MCP] Impact analysis for a JIRA task
+Extra3: [Playwright MCP] Manual UI tests at http://localhost:3000
+Extra4: Run /security-review in Claude Code
+Extra5: Performance tuning (Prisma query optimization, Next.js caching strategy)

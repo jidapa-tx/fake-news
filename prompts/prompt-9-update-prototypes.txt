@@ -1,0 +1,3 @@
+[Optional — use only if UI prototypes were revised by a design team]
+
+Review the updated HTML prototypes in `ui-prototypes/` then update `docs/ui-requirement.md` to match what was actually built — interactions, Thai labels, flows, and any additions or changes from the original spec.

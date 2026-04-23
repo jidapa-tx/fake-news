@@ -1,0 +1,10 @@
+Add Thai/English i18n to the ชัวร์ก่อนแชร์ application, then update the docs.
+
+**Implementation:**
+- Framework: next-intl
+- `messages/th.json` (default) and `messages/en.json`
+- Translate all UI text: verdict labels (อันตราย/น่าสงสัย/ไม่แน่ใจ/ค่อนข้างจริง/ยืนยันแล้ว), stance badges, error messages, privacy banner, navigation
+- TH/EN toggle in Header, persisted in localStorage key `lang`
+
+**After implementation:**
+Update `docs/requirement.md` and `docs/technical-spec.md` to reflect the i18n library, translation file locations, and language persistence mechanism.

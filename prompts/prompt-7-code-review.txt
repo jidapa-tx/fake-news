@@ -1,0 +1,11 @@
+Do a code review of the ชัวร์ก่อนแชร์ codebase. Run ESLint first.
+
+Project-specific things to verify:
+- All API errors return `{ error: { code, message_th, message_en } }` — never raw stack traces
+- Gemini failures have graceful fallback (never crash the endpoint)
+- No personal data (IP, user agent) stored server-side; history stays in localStorage only
+- Trending counts use hashed queries — no raw text linkable to users
+- Rate limiting active on all /api/* routes
+- No secrets or API keys hardcoded
+
+Report issues as Critical / Warning / Suggestion with file path and line number. Fix all Critical and Warning issues.

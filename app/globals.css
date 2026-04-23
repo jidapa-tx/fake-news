@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary: #1E40AF;
+  --danger: #DC2626;
+  --verified: #059669;
+  --warning: #D97706;
+  --yellow: #CA8A04;
+  --lime: #65A30D;
+}
+
+body {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+}
+
+/* Verdict colors */
+.verdict-DANGEROUS { color: #DC2626; border-color: #DC2626; }
+.verdict-SUSPICIOUS { color: #D97706; border-color: #D97706; }
+.verdict-UNCERTAIN { color: #CA8A04; border-color: #CA8A04; }
+.verdict-LIKELY_TRUE { color: #65A30D; border-color: #65A30D; }
+.verdict-VERIFIED { color: #059669; border-color: #059669; }
+
+.badge-DANGEROUS { background: #FEE2E2; color: #DC2626; }
+.badge-SUSPICIOUS { background: #FEF3C7; color: #D97706; }
+.badge-UNCERTAIN { background: #FEF9C3; color: #CA8A04; }
+.badge-LIKELY_TRUE { background: #F0FDF4; color: #65A30D; }
+.badge-VERIFIED { background: #ECFDF5; color: #059669; }

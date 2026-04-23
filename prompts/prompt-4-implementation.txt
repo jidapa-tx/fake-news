@@ -1,0 +1,13 @@
+Implement the ชัวร์ก่อนแชร์ application — Phase 1, 2, and 3 — following @docs/requirement.md, @docs/technical-spec.md, and using @ui-prototypes/ as visual reference.
+
+Create a TodoWrite plan before starting. Implement in order:
+
+**Phase 1 — Foundation:**
+Docker Compose (Next.js + PostgreSQL), Prisma schema + migration, DB seed (20+ TrustedSources, 10+ KnownFakeClaims, 10+ SuspiciousDomains), .env.example, GET /api/health
+
+**Phase 2 — Core API:**
+POST /api/analyze/text, POST /api/analyze/source, GET /api/trending, GET /api/references/:analysisId
+All with: Zod validation, rate limiting (30 req/min), `{ error: { code, message_th, message_en } }` error format
+
+**Phase 3 — Web UI:**
+Home, Result, History, Trending pages — match design tokens from prototypes exactly, dark mode via Tailwind, language toggle button in header (no i18n logic yet), localStorage for history

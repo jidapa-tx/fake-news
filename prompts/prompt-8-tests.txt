@@ -1,0 +1,10 @@
+Set up Vitest and write + run unit tests for all core services. Fix failures until all pass.
+
+**Setup:** `vitest.config.ts`, mock Prisma + Gemini with `vi.mock()`, jsdom for hook tests. Add `"test": "vitest run"` to package.json.
+
+**Services to cover (min 5 tests each):**
+- `text-analyzer` — credibility scoring, verdict levels, known fake claim detection
+- `image-analyzer` — Gemini response parsing, fallback on API failure, EXIF extraction
+- `source-analyzer` — risk level for known/unknown/trusted domains
+- `useLocalHistory` hook — CRUD, 100-entry limit, export/import JSON, filter by verdict
+- API Zod validation — reject text >5000 chars, invalid URL, image >10MB, wrong file type, verify error format

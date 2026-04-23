@@ -1,0 +1,7 @@
+Read `docs/initial-requirement.md` and create two documents:
+
+1. `docs/requirement.md` — functional requirements only (no tech stack, no API specs, no DB schemas), organized by FR.1–FR.7 modules, each requirement testable with clear acceptance criteria
+
+2. `docs/data-schema.md` — two storage layers:
+   - PostgreSQL (Prisma): Analysis, Reference, TrustedSource, KnownFakeClaim, SuspiciousDomain, TrendingEntry — with Prisma schema syntax, Mermaid ERD, and seed data examples (20+ TrustedSources including Thai + international outlets, 10+ KnownFakeClaims, 10+ SuspiciousDomains)
+   - localStorage: HistoryItem (max 100 entries, oldest evicted)

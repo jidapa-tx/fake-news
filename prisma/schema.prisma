@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum VerdictLevel {
+  DANGEROUS
+  SUSPICIOUS
+  UNCERTAIN
+  LIKELY_TRUE
+  VERIFIED
+}
+
+enum Stance {
+  SUPPORTING
+  OPPOSING
+  NEUTRAL
+}
+
+enum SourceType {
+  TRUSTED_MEDIA
+  FACT_CHECKER
+  ACADEMIC
+  GOV
+  UNKNOWN
+}
+
+model Analysis {
+  id          String       @id @default(cuid())
+  query       String
+  queryType   String
+  queryHash   String
+  verdict     VerdictLevel
+  score       Int
+  confidence  Int
+  reasoning   String[]
+  createdAt   DateTime     @default(now())
+
+  references  Reference[]
+  trending    TrendingEntry[]
+
+  @@index([queryHash])
+  @@index([createdAt])
+}
+
+model Reference {
+  id          String     @id @default(cuid())
+  analysisId  String
+  sourceName  String
+  url         String
+  stance      Stance
+  excerpt     String
+  publishedAt DateTime?
+  credibility Int
+  sourceType  SourceType
+
+  analysis    Analysis   @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId])
+}
+
+model TrustedSource {
+  id          String     @id @default(cuid())
+  name        String
+  nameTh      String?
+  domain      String     @unique
+  type        SourceType
+  credibility Int
+  language    String
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+}
+
+model KnownFakeClaim {
+  id          String       @id @default(cuid())
+  claim       String
+  claimHash   String       @unique
+  verdict     VerdictLevel
+  evidence    String
+  firstSeenAt DateTime
+  createdAt   DateTime     @default(now())
+
+  @@index([claimHash])
+}
+
+model SuspiciousDomain {
+  id        String   @id @default(cuid())
+  domain    String   @unique
+  reason    String
+  riskLevel String
+  addedAt   DateTime @default(now())
+}
+
+model TrendingEntry {
+  id          String       @id @default(cuid())
+  queryHash   String
+  period      String
+  count       Int          @default(1)
+  lastVerdict VerdictLevel
+  updatedAt   DateTime     @updatedAt
+  analysisId  String?
+
+  analysis    Analysis?    @relation(fields: [analysisId], references: [id], onDelete: SetNull)
+
+  @@unique([queryHash, period])
+  @@index([period, count])
+}

@@ -60,4 +60,35 @@ describe('analyzeSource', () => {
     const result = await analyzeSource('https://www.example.com/path');
     expect(result.domain).toBe('example.com');
   });
+
+  it('flags .info domains as suspicious', async () => {
+    const { prisma } = await import('@/lib/prisma');
+    vi.mocked(prisma.trustedSource.findFirst).mockResolvedValueOnce(null);
+    vi.mocked(prisma.suspiciousDomain.findFirst).mockResolvedValueOnce(null);
+    const { analyzeSource } = await import('@/services/source-analyzer');
+    const result = await analyzeSource('https://foo.info/a');
+    expect(result.riskLevel).toBe('suspicious');
+    expect(result.riskReasonsTh.length).toBeGreaterThan(0);
+  });
+
+  it('returns safe for unknown .com domains with no suspicious signal', async () => {
+    const { prisma } = await import('@/lib/prisma');
+    vi.mocked(prisma.trustedSource.findFirst).mockResolvedValueOnce(null);
+    vi.mocked(prisma.suspiciousDomain.findFirst).mockResolvedValueOnce(null);
+    const { analyzeSource } = await import('@/services/source-analyzer');
+    const result = await analyzeSource('https://example.com/a');
+    expect(result.riskLevel).toBe('safe');
+  });
+
+  it('maps non-high suspicious domain riskLevel to "suspicious"', async () => {
+    const { prisma } = await import('@/lib/prisma');
+    vi.mocked(prisma.trustedSource.findFirst).mockResolvedValueOnce(null);
+    vi.mocked(prisma.suspiciousDomain.findFirst).mockResolvedValueOnce({
+      id: 's', domain: 'borderline.com', reason: 'สงสัย', riskLevel: 'medium', addedAt: new Date(),
+    });
+    const { analyzeSource } = await import('@/services/source-analyzer');
+    const result = await analyzeSource('https://borderline.com/a');
+    expect(result.riskLevel).toBe('suspicious');
+    expect(result.isKnownPhishing).toBe(true);
+  });
 });

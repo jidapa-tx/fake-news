@@ -1,0 +1,111 @@
+Fix three bugs on the /trending page.
+
+---
+
+## Bug 1 — API period filter incorrectly filters by row's `period` field instead of date range
+
+File: `app/api/trending/route.ts`
+
+Current query:
+```ts
+const entries = await prisma.trendingEntry.findMany({
+  where: { period },
+  orderBy: { count: 'desc' },
+  take: 20,
+  include: { analysis: { select: { query: true, createdAt: true } } },
+});
+```
+
+Problems:
+1. `where: { period }` filters by the row's `period` label string. All rows in DB have `period='day'` (set at upsert time), so `period=week` and `period=month` always return empty.
+2. No date range filter — "วันนี้" returns rows from all time.
+
+Fix: Remove `period` from `where`. Use only `updatedAt: { gte: cutoff }` with calendar-based cutoffs. The `period` URL param selects the date window only — it does NOT filter on the row's `period` field.
+
+Add `getPeriodCutoff` helper above the `GET` handler:
+```ts
+function getPeriodCutoff(period: string): Date {
+  const now = new Date();
+  if (period === 'day') {
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 00:00 today
+  }
+  if (period === 'week') {
+    const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
+    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate() - diffToMonday); // Mon 00:00
+  }
+  return new Date(now.getFullYear(), now.getMonth(), 1); // 1st of month 00:00
+}
+```
+
+Updated query:
+```ts
+const cutoff = getPeriodCutoff(period);
+const entries = await prisma.trendingEntry.findMany({
+  where: { updatedAt: { gte: cutoff } },
+  orderBy: { count: 'desc' },
+  take: 10,
+  include: { analysis: { select: { query: true, createdAt: true } } },
+});
+```
+
+Notes:
+- `take: 20` → `take: 10` (only top 10 shown)
+- Calendar boundaries: day=00:00 today, week=Monday 00:00, month=1st 00:00
+- All DB rows have `period='day'` — this is intentional. The three tabs share the same rows, just filtered by different date windows (today ⊂ this week ⊂ this month)
+
+Do NOT change `app/api/analyze/text/route.ts` — it should keep upserting only `period: 'day'` rows.
+
+---
+
+## Bug 2 — Summary card "พบข้อมูลเท็จ/น่าสงสัย" is hardcoded at 68%
+
+File: `app/trending/page.tsx`
+
+Current code:
+```tsx
+{ num: '68%', label: 'พบข้อมูลเท็จ/น่าสงสัย' },
+```
+
+Problem: always shows 68% regardless of actual data or selected period.
+
+Fix: compute percentage from current period items where `lastVerdict` is `'DANGEROUS'` or `'SUSPICIOUS'` (from `VerdictLevel` enum in `types/index.ts`):
+
+```tsx
+{
+  num: data?.items.length
+    ? `${Math.round((data.items.filter((i) => i.lastVerdict === 'DANGEROUS' || i.lastVerdict === 'SUSPICIOUS').length / data.items.length) * 100)}%`
+    : '...',
+  label: 'พบข้อมูลเท็จ/น่าสงสัย',
+},
+```
+
+---
+
+## Bug 3 — Frontend renders all items instead of only top 10, and has a redundant 11–20 section
+
+File: `app/trending/page.tsx`
+
+Problems:
+1. `data.items.map(...)` renders all items from the API, not just top 10.
+2. The `data.items.length > 10` block duplicates items 11–20.
+
+Fix:
+```tsx
+{data.items.slice(0, 10).map((item) => (
+  // ... existing item JSX unchanged
+))}
+```
+
+Delete the entire `{data.items.length > 10 && ( ... )}` block.
+
+---
+
+## Summary of changes
+
+| File | Change |
+|------|--------|
+| `app/api/trending/route.ts` | Add `getPeriodCutoff()` with calendar boundaries; remove `period` from `where`; add `updatedAt: { gte: cutoff }`; change `take: 20` → `take: 10` |
+| `app/trending/page.tsx` | Compute fake/suspicious % from `lastVerdict`; change `data.items.map(...)` → `data.items.slice(0, 10).map(...)`; remove `data.items.length > 10` block |
+
+`app/api/analyze/text/route.ts` — no change needed.

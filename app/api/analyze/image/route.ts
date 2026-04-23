@@ -29,14 +29,14 @@ export async function POST(req: NextRequest) {
 
   const captionRaw = formData.get('caption');
   const captionParsed = CaptionSchema.safeParse(
-    captionRaw instanceof File ? undefined : captionRaw ?? undefined
+    captionRaw instanceof File ? undefined : (captionRaw ?? undefined)
   );
   if (!captionParsed.success) return errorResponse('VALIDATION_ERROR');
   const caption = captionParsed.data;
 
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const result = await analyzeImage(buffer, file.type, file.name, caption);
+    const result = await analyzeImage(buffer, file.type, caption);
     const queryHash = hashQuery(`image:${file.name}:${file.size}`);
 
     const analysis = await prisma.analysis.create({

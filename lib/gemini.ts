@@ -159,7 +159,8 @@ export async function analyzeTextForFakeNews(query: string): Promise<GeminiTextR
 
 export async function analyzeImageForAI(
   base64: string,
-  mimeType: string
+  mimeType: string,
+  caption?: string
 ): Promise<GeminiImageResult> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return FALLBACK;
@@ -167,12 +168,15 @@ export async function analyzeImageForAI(
   try {
     const ai = new GoogleGenAI({ apiKey });
 
+    const contents: Array<{ text: string } | { inlineData: { data: string; mimeType: string } }> = [
+      { text: IMAGE_PROMPT },
+      ...(caption ? [{ text: `Caption/context provided: "${caption}"` }] : []),
+      { inlineData: { data: base64, mimeType } },
+    ];
+
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: [
-        { text: IMAGE_PROMPT },
-        { inlineData: { data: base64, mimeType } },
-      ],
+      contents,
     });
 
     const text = (response.text ?? '').trim();

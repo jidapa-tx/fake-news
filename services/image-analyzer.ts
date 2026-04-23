@@ -27,14 +27,14 @@ export interface ImageAnalysisResult {
 export async function analyzeImage(
   buffer: Buffer,
   mimeType: string,
-  filename: string
+  caption?: string
 ): Promise<ImageAnalysisResult> {
   const base64 = buffer.toString('base64');
   const fileSizeKb = Math.round(buffer.length / 1024);
 
   // Extract EXIF (basic check for JPEG)
-  const hasExif = mimeType === 'image/jpeg' && buffer.length > 100 &&
-    buffer[0] === 0xFF && buffer[1] === 0xD8;
+  const hasExif =
+    mimeType === 'image/jpeg' && buffer.length > 100 && buffer[0] === 0xff && buffer[1] === 0xd8;
 
   // Suspicious signals
   const suspiciousSignals: string[] = [];
@@ -49,7 +49,7 @@ export async function analyzeImage(
     suspiciousSignals,
   };
 
-  const aiDetection = await analyzeImageForAI(base64, mimeType);
+  const aiDetection = await analyzeImageForAI(base64, mimeType, caption);
 
   // Score: high AI probability → low credibility score
   let score = 100 - aiDetection.aiProbability;

@@ -27,6 +27,7 @@ To provide Thai internet users with a trustworthy, privacy-first web application
 | State | Zustand + TanStack Query |
 | Validation | Zod |
 | Extension | Vite + CRXJS + Manifest V3 |
+| AI / LLM | Google Gemini API (`@google/generative-ai`) |
 | Deployment | Local Docker Compose only (no production deploy) |
 
 ---
@@ -71,6 +72,12 @@ To provide Thai internet users with a trustworthy, privacy-first web application
 | FR.8.3 | As a user, I want to manually paste content into the extension popup, so I can check ad-hoc text. | 1. Extension popup icon click opens input UI. 2. Input accepts text or URL. 3. Results display inline in popup without opening new tab. |
 | FR.8.4 | As a user, I want to control which sites the extension runs on, so I can manage privacy and performance. | 1. Settings page within popup allows per-site toggle (facebook.com, x.com, today.line.me). 2. Global on/off switch is accessible from popup header. 3. Settings persist in `chrome.storage.local`. |
 | FR.8.5 | As a user, I want extension API calls to be cached, so I don't wait for repeated checks. | 1. Results cached in `chrome.storage.local` with content hash as key. 2. Cache TTL: 1 hour for fresh content, 24 hours for known fake claims. 3. Cache is cleared when user clicks "Refresh" on a badge. |
+
+| **FR.9** | **Gemini AI Fake News Analysis** | |
+| FR.9.1 | As a user, I want the system to use Google Gemini API to analyze the credibility of news content, so I get AI-powered fact-checking results. | 1. `/api/analyze/text` calls Gemini API with a structured Thai-language prompt containing the submitted text or URL content. 2. Gemini returns: verdict level, score (0–100), confidence (%),  3–7 reasoning bullets in Thai, and key claim extraction. 3. If Gemini API is unavailable or returns an error, the system falls back to rule-based heuristics and displays "⚠ ใช้ระบบสำรอง: ผลลัพธ์อาจแม่นยำน้อยกว่าปกติ". |
+| FR.9.2 | As a user, I want Gemini to cross-reference news against known Thai fact-checking databases before generating its verdict, so results are grounded in verified sources. | 1. Prompt to Gemini includes excerpts from `KnownFakeClaim` DB records that semantically match the query (top 5 by similarity). 2. Gemini's response indicates whether any known fake claim was matched ("พบข่าวที่ตรงกัน" / "ไม่พบใน ฐานข้อมูล"). 3. Matched known claims are surfaced as highlighted references in the result UI. |
+| FR.9.3 | As a user, I want the Gemini prompt to be configurable via an environment variable, so the system can be tuned without code changes. | 1. System prompt template stored in `GEMINI_SYSTEM_PROMPT` env var with a sensible default. 2. Model name configurable via `GEMINI_MODEL` (default: `gemini-1.5-flash`). 3. Temperature and max tokens configurable via `GEMINI_TEMPERATURE` and `GEMINI_MAX_TOKENS`. |
+| FR.9.4 | As a user, I want Gemini analysis results to be cached in Redis, so repeated checks on the same content are fast and don't waste API quota. | 1. Cache key = SHA-256 hash of normalized query text. 2. TTL = 6 hours for general content, 24 hours for content that matched a known fake claim. 3. Cache hit returns `cached: true` flag in API response JSON. |
 
 ---
 

@@ -1,0 +1,149 @@
+# Integration Test Generation Prompt — ชัวร์ก่อนแชร์
+
+> Feed this prompt to a coding agent to **generate an integration test suite** for this project.
+> Tests will live in `tests/integration/`, use Vitest (already installed), hit real HTTP routes at `http://localhost:3000`, mock Gemini, and share the dev Postgres DB with tagged-row cleanup.
+
+---
+
+## Prompt (copy everything below)
+
+You are a TypeScript / Next.js engineer. Generate a complete API-level integration test suite for the "ชัวร์ก่อนแชร์" fake-news detector. Do not run manual QA — produce committable test files.
+
+### 1. Goal
+Create a Vitest-based integration suite under `tests/integration/` that:
+- Sends real HTTP requests to `http://localhost:3000`
+- Mocks the Gemini SDK so no external API calls are made
+- Uses the existing dev Postgres DB (docker compose) and cleans up any rows it created via a test-tag prefix
+- Can be run repeatedly without flake: `npm run test:integration`
+
+### 2. Pre-flight — read these BEFORE writing any test
+Read each file and record the exact contract / shape. Do not guess.
+
+- `app/api/health/route.ts`
+- `app/api/analyze/text/route.ts`
+- `app/api/analyze/image/route.ts`
+- `app/api/analyze/source/route.ts`
+- `app/api/trending/route.ts`
+- `app/api/references/[analysisId]/route.ts`
+- `lib/errors.ts` — authoritative shape for `{ error: { code, message_th, message_en } }`
+- `lib/rate-limit.ts` — confirm 30 req / 60s window and IP header precedence
+- `prisma/schema.prisma` — models to clean up (`Analysis`, `Reference`, `TrendingEntry`, etc.)
+- `vitest.config.ts` — existing unit config (do NOT modify)
+- `tests/setup.ts` — existing mocks (do NOT reuse in integration)
+- `tests/api-validation.test.ts` — style reference for Zod error assertions
+
+Verify before starting:
+- `docker compose ps` shows `app` and `db` healthy
+- `curl -s http://localhost:3000/api/health` returns 200 with `db:"connected"`
+
+Do **not** run `npm install`. If a dep is genuinely missing, list it and stop for user approval.
+
+### 3. File layout (create exactly this)
+```
+tests/integration/
+  setup.ts                    # global vi.mock for @google/genai, env guards
+  helpers/
+    db.ts                     # prisma client + cleanupTestRows()
+    http.ts                   # postJson / postForm / getJson wrappers with base URL + test IP header
+    gemini-mock.ts            # deterministic fixtures returned by the mocked SDK
+  health.test.ts
+  analyze-text.test.ts
+  analyze-source.test.ts
+  analyze-image.test.ts
+  trending.test.ts
+  references.test.ts
+  rate-limit.test.ts
+vitest.integration.config.ts  # include: tests/integration/**, testTimeout: 30000, pool: 'forks', singleFork: true for rate-limit
+```
+
+### 4. Coverage requirements per file
+
+**`health.test.ts`**
+- `GET /api/health` → 200, body `{ status:'ok', db:'connected', timestamp:<ISO> }`
+
+**`analyze-text.test.ts`**
+- Valid Thai query (prefix `__test__`) → 200, `TextAnalyzeResponse` shape, `Analysis` row persisted with matching `analysisId`, ≥1 `Reference` row linked
+- Empty `query` → 400 with `{ code:'VALIDATION_ERROR', message_th, message_en }`
+- `query.length > 5000` → 400
+- Missing `queryType` → 400
+- Duplicate query within cache TTL → returns same `analysisId` (cache hit)
+- `queryType:'url'` with non-URL string → 400
+
+**`analyze-source.test.ts`**
+- Trusted domain (e.g. `https://www.bbc.com/news`) → 200, `riskLevel:'safe'`
+- Unknown domain (random `__test__-<uuid>.example`) → 200, `riskLevel` in `'unknown'|'suspicious'|'safe'` per heuristic
+- Seeded phishing domain from `SuspiciousDomain` → 200, `riskLevel:'dangerous'`
+- `url:'not-a-url'` → 400 `code:'INVALID_URL'`
+
+**`analyze-image.test.ts`**
+- Valid 1×1 PNG uploaded via `multipart/form-data` → 200, `Analysis` row persisted
+- File > 10 MB (use `Buffer.alloc(11*1024*1024)`) → 400
+- MIME `text/plain` → 400
+- Missing `image` field → 400
+
+**`trending.test.ts`**
+- `GET /api/trending` → 200, body matches `{ period, updatedAt, items:[] }`, `items.length ≤ 20`
+- `?period=day|week|month` each → 200 with matching `period`
+- `?period=invalid` → 400
+
+**`references.test.ts`**
+- Valid `analysisId` (created in test) → 200 array
+- Unknown id → 404 `{ code:'NOT_FOUND' }`
+
+**`rate-limit.test.ts`**
+- 30 sequential `GET /api/trending` with header `x-forwarded-for: 10.99.99.1` → all 200
+- 31st within the same 60 s window → 429 `{ code:'RATE_LIMIT' }`
+- Config: this file runs single-fork (no parallel worker) so the in-memory counter is isolated
+
+### 5. Conventions
+- All test data must be identifiable: text queries start with `__test__`, domains start with `__test__-`, images uploaded with filename `__test__-*.png`. Helpers must enforce this.
+- `afterAll` in every test file calls `cleanupTestRows()` — delete `Analysis` where `query LIKE '__test__%'` (and cascade `Reference`), delete `TrendingEntry` where `queryPreview LIKE '__test__%'`.
+- Gemini mock: `vi.mock('@google/genai', () => ...)` returns a `GoogleGenAI` class whose `models.generateContent` returns the appropriate fixture (DANGEROUS / UNCERTAIN / VERIFIED / SUSPICIOUS) based on the prompt text (simple substring switch).
+- Assert **exact** error shape from `lib/errors.ts` (`code`, `message_th`, `message_en` all strings, no stack).
+- `testTimeout: 30_000`. Do not use real timers or `setTimeout` longer than 1 s.
+- The rate-limit test file must run in a single fork / worker; other files can parallelize.
+- Do **not** modify production code. Only allowed writes: new files above + script additions in `package.json`.
+
+### 6. `package.json` scripts to add
+```json
+{
+  "scripts": {
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:integration:watch": "vitest --config vitest.integration.config.ts"
+  }
+}
+```
+
+### 7. Deliverables checklist
+- [ ] 7 `*.test.ts` files under `tests/integration/`
+- [ ] 3 helper files under `tests/integration/helpers/`
+- [ ] `tests/integration/setup.ts`
+- [ ] `vitest.integration.config.ts` at repo root
+- [ ] Two scripts added to `package.json`
+- [ ] One-paragraph section in `CLAUDE.md` (under "Running Locally") describing how to run the integration suite
+
+### 8. Acceptance criteria
+1. `docker compose up` followed by `npm run test:integration` → every test passes
+2. Running the command twice back-to-back still passes (cleanup works)
+3. No network traffic to any Google / Gemini host (verify via mock call counter or a network-request spy in `setup.ts`)
+4. No `__test__` rows remain in Postgres after the run
+5. No warnings about unhandled promises or open handles
+
+### 9. Final report format
+Return a summary table after generating:
+
+| File | Tests | Routes covered | Edge cases covered |
+|------|-------|----------------|--------------------|
+
+Plus:
+- New deps added (should be zero)
+- Any deviations from this spec and why
+- Exact command the user should run next
+
+---
+
+### Constraints
+- **Do not** run destructive DB operations outside cleanup helpers
+- **Do not** commit or push anything
+- **Do not** add Playwright, supertest, or other runners — Vitest + native `fetch` only
+- **Do not** hit Gemini, Google, or any external API at runtime

@@ -52,7 +52,12 @@ export default function TrendingPage() {
       <div className="grid grid-cols-3 gap-3 mb-5">
         {[
           { num: data?.items.reduce((a, b) => a + b.checkCount, 0) ?? '...', label: 'ตรวจสอบช่วงนี้' },
-          { num: '68%', label: 'พบข้อมูลเท็จ/น่าสงสัย' },
+          {
+            num: data?.items.length
+              ? `${Math.round((data.items.filter((i) => i.lastVerdict === 'DANGEROUS' || i.lastVerdict === 'SUSPICIOUS').length / data.items.length) * 100)}%`
+              : '...',
+            label: 'พบข้อมูลเท็จ/น่าสงสัย',
+          },
           { num: data?.items.length ?? '...', label: 'หัวข้อกำลังติดตาม' },
         ].map((s) => (
           <div key={s.label} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-center">
@@ -100,7 +105,7 @@ export default function TrendingPage() {
           {data.items.slice(0, 10).length > 0 && (
             <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide py-1">อันดับ 1–10</p>
           )}
-          {data.items.map((item) => (
+          {data.items.slice(0, 10).map((item) => (
             <Link
               key={item.analysisId || item.rank}
               href={item.analysisId ? `/result/${item.analysisId}` : '#'}
@@ -141,25 +146,6 @@ export default function TrendingPage() {
             </Link>
           ))}
 
-          {data.items.length > 10 && (
-            <>
-              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide py-1 mt-2">อันดับ 11–20</p>
-              {data.items.slice(10).map((item) => (
-                <Link
-                  key={item.analysisId || item.rank}
-                  href={item.analysisId ? `/result/${item.analysisId}` : '#'}
-                  className="flex items-center gap-4 px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-700 transition-colors no-underline text-slate-900 dark:text-slate-100"
-                >
-                  <span className="text-base font-semibold w-7 text-center flex-shrink-0 text-slate-400 tabular-nums">{item.rank}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap mb-1">{item.queryPreview}</div>
-                    <div className="text-xs text-slate-400 tabular-nums">{item.checkCount.toLocaleString()} ครั้ง</div>
-                  </div>
-                  <VerdictBadge verdict={item.lastVerdict} />
-                </Link>
-              ))}
-            </>
-          )}
         </div>
       )}
     </div>

@@ -1,0 +1,116 @@
+# Integration Test Prompt — ชัวร์ก่อนแชร์
+
+> Use this prompt with Claude Code (or another agent) that has **Chrome DevTools MCP** connected, to run integration tests covering all features of the web app at `localhost:3000`
+
+---
+
+## Prompt (copy everything below)
+
+You are a QA engineer tasked with end-to-end testing of the **"ชัวร์ก่อนแชร์"** (Thai fake news detector) web app.
+Use **Chrome DevTools MCP** to drive a real browser. Do NOT use curl/fetch or call APIs directly — all assertions must go through the UI to verify the real user flow.
+
+### Pre-flight
+1. Verify `http://localhost:3000` returns 200 (use `new_page` then check response status via `list_network_requests`)
+2. If it does not respond, stop and notify the user — do not try to start the server yourself
+3. In DevTools set `emulate_network` = "No emulation" and `emulate_cpu` = 1 (no throttling)
+4. Clear localStorage before every run: `evaluate_script` → `localStorage.clear()`
+
+### Test Suite
+
+Follow the real user flow in order. Run each step and report pass/fail with evidence (screenshot or network log) for every case.
+
+#### TC-01: Homepage render
+- `navigate_page` → `/`
+- `take_snapshot`, assert the following elements exist:
+  - heading "ตรวจสอบข่าวก่อนส่งต่อ"
+  - 3 tab buttons: `📝 ข้อความ`, `🔗 URL`, `🖼 รูปภาพ`
+  - submit button `🔍 ตรวจสอบ`
+  - nav links: `หน้าหลัก`, `ยอดนิยม`, `ประวัติ`
+- `list_console_messages` — must contain no errors (favicon 404 may be ignored)
+
+#### TC-02: Text analysis — fake news (expect DANGEROUS)
+- On `/`, tab `📝 ข้อความ` (default)
+- `fill` the textarea with: `"นักวิทยาศาสตร์ยืนยันว่าการดื่มน้ำมะนาวทุกเช้าสามารถรักษามะเร็งได้ 100% โดยไม่ต้องใช้ยา แชร์ด่วน!"`
+- Verify the counter shows `96/5000` (not `0/5000` — if `0`, React state is out of sync = bug)
+- `click` the `🔍 ตรวจสอบ` button
+- `wait_for` navigation to `/result/<id>` (timeout 60s — Gemini can be slow)
+- `take_snapshot` on the result page — must show:
+  - verdict badge = `DANGEROUS` or `SUSPICIOUS`
+  - score (0–100)
+  - reasoning list (≥ 1 item)
+  - references (≥ 1 source) with credibility %
+- Save the `analysisId` from the URL — used in TC-06
+
+#### TC-03: Text analysis — truthful (expect VERIFIED/UNCERTAIN)
+- Go back to `/`
+- Query: `"ประเทศไทยมี 77 จังหวัด"`
+- Submit → verdict must **not** be `DANGEROUS`
+
+#### TC-04: URL / source analysis
+- Tab `🔗 URL`
+- Enter `https://www.bbc.com/news`
+- Submit → result page must show domain info (`bbc.com`, SSL valid, risk level)
+
+#### TC-05: Image analysis
+- Tab `🖼 รูปภาพ`
+- Upload a small test image (use the `upload_file` MCP tool with a small PNG)
+- Submit → result page must show AI detection probability and EXIF metadata
+
+#### TC-06: Result page — deep link
+- `navigate_page` to `/result/<analysisId from TC-02>`
+- Must load successfully and show the same data (persistence via DB)
+
+#### TC-07: History page
+- Run TC-02 first so an item exists in localStorage
+- `navigate_page` → `/history`
+- Must show the item just analyzed, with verdict badge
+- Click the item → navigates to the correct result page
+
+#### TC-08: Trending page
+- `navigate_page` → `/trending`
+- Must show a list of ≥ 1 item with rank, verdict, check count
+- Click an item → navigates to the correct result page
+
+#### TC-09: Validation errors
+- On `/`, tab text, click submit without entering anything → error `"กรุณาใส่ข้อความหรือ URL"` must appear
+- Tab URL, enter `"not-a-url"`, submit → error `"รูปแบบ URL ไม่ถูกต้อง"`
+- Tab image, upload a `.txt` file → error about unsupported file type
+
+#### TC-10: i18n toggle
+- Click the `EN` button in the header → UI must switch to English
+- Click back to `TH` → returns to Thai
+
+#### TC-11: Network / performance sanity
+- Use `performance_start_trace` while loading `/` → `performance_stop_trace` → `performance_analyze_insight`
+- Report LCP, CLS, total JS size
+- Flag if LCP > 4s or any request fails (4xx/5xx) other than `/favicon.ico`
+
+#### TC-12: Console & uncaught errors
+- After running all TCs, `list_console_messages` for the entire session
+- No uncaught exceptions or React hydration errors allowed
+
+### Reporting format
+
+Produce a summary table in this format:
+
+| ID | Feature | Status | Evidence | Notes |
+|----|---------|--------|----------|-------|
+| TC-01 | Homepage | ✅ / ❌ | screenshot path | ... |
+
+At the end report:
+- Pass / fail / blocked counts
+- Bugs found, sorted by severity (critical → minor)
+- Brief fix suggestion (1 line per bug)
+
+### Constraints
+- **Do NOT** modify source code during testing
+- **Do NOT** use curl / fetch — every assertion must go through Chrome DevTools MCP
+- Save screenshots to `.test-artifacts/<timestamp>/TC-XX.png`
+- If a step is flaky, retry up to 2 times before marking it as fail
+
+---
+
+## Chrome DevTools MCP tools used most often
+`new_page`, `navigate_page`, `take_snapshot`, `take_screenshot`, `click`, `fill`, `upload_file`,
+`evaluate_script`, `list_console_messages`, `list_network_requests`, `wait_for`,
+`performance_start_trace`, `performance_stop_trace`, `performance_analyze_insight`

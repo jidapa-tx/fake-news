@@ -1,0 +1,269 @@
+You are a technical presentation developer. Generate a complete, single-file HTML presentation for the project "ชัวร์ก่อนแชร์" (Sure Before Share) — a Thai fake news detector web app built as an MVP.
+
+The output must be a **single self-contained HTML file** using Reveal.js (load from CDN). Each slide is a `<section>` tag. The file must be fully editable — a developer should be able to open it in any text editor and change content slide by slide with no build step required.
+
+## Design System
+
+### Theme: Soft UI — Dark Blue
+Apply these styles globally via a `<style>` block in the `<head>`:
+
+```
+Background:       #0D1B2A  (deep navy)
+Surface cards:    #1A2D44  (dark blue-grey, with soft box-shadow)
+Accent primary:   #4F9CF9  (sky blue)
+Accent secondary: #6EC6FF  (light blue)
+Text primary:     #E8F1FF
+Text muted:       #7A9CC4
+Border/divider:   rgba(79,156,249,0.15)
+Soft UI shadows:  box-shadow: 6px 6px 14px rgba(0,0,0,0.4), -4px -4px 10px rgba(255,255,255,0.03)
+Glow highlight:   box-shadow: 0 0 20px rgba(79,156,249,0.25)
+Border radius:    16px cards, 12px inputs, 100px pills
+```
+
+### Font
+Load from Google Fonts CDN:
+```html
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+```
+Set `font-family: 'Kanit', sans-serif` on `body` and all headings.
+
+### Reveal.js Config
+```js
+Reveal.initialize({
+  hash: true,
+  transition: 'slide',
+  backgroundTransition: 'fade',
+  controls: true,
+  progress: true,
+  center: true,
+  width: 1280,
+  height: 720,
+});
+```
+
+---
+
+## Audience
+Technical reviewers and stakeholders who are familiar with web development. Presentation language: Thai (with English technical terms where appropriate).
+
+## Presentation Goals
+1. Explain the problem being solved
+2. Demonstrate the solution and key features
+3. Walk through the technical architecture
+4. Highlight design decisions and trade-offs
+5. Show the scope of the MVP
+
+---
+
+## Project Context (use this to inform every slide)
+
+**App name:** ชัวร์ก่อนแชร์
+**Tagline:** ตรวจสอบข่าวก่อนส่งต่อ — เพราะข่าวปลอมแพร่เร็วกว่าที่คุณคิด
+
+**Stack:** Next.js 14 (App Router) + TypeScript strict mode, TailwindCSS + shadcn/ui, PostgreSQL 15 + Prisma ORM, Zustand + TanStack Query, Zod validation, Google Gemini API (gemini-2.5-flash), next-intl (TH/EN)
+
+**Deployment:** Local Docker Compose only (MVP scope — no production deploy, no auth)
+
+**Features (FR.1–FR.7):**
+- FR.1 — No-auth access; history stored in localStorage only; privacy-first
+- FR.2 — Multi-format input (text / URL / image); 5-level credibility score (0–100); evidence breakdown; AI confidence indicator; Thai reasoning bullets
+- FR.3 — Reference list with stance badges; source credibility sorting; 20+ pre-seeded Thai and international trusted sources
+- FR.4 — Domain analysis (age, SSL, WHOIS, phishing); social account analysis (MVP: mock data); coordinated behavior detection (MVP: seeded demo)
+- FR.5 — AI-generated image detection via Gemini; image metadata/EXIF analysis; reverse image search (MVP: mock)
+- FR.6 — Trending searches page (anonymized, hashed queries); period filter (day/week/month); clickable entries
+- FR.7 — Local history page; search & filter; export/import JSON
+
+**5 Verdict Levels:**
+- อันตราย (0–20, red) / น่าสงสัย (21–40, orange) / ไม่แน่ใจ (41–60, yellow) / ค่อนข้างจริง (61–80, lime) / ยืนยันแล้ว (81–100, green)
+
+**Key Technical Decisions:**
+- All history in localStorage — no personal data on server
+- Query hashing (SHA-256) for trending — raw text never stored
+- Rate limiting: 30 req/min per IP (in-memory sliding window)
+- Single external API: Google Gemini (image only); all other analysis uses DB lookups + scoring logic
+- Graceful fallback if Gemini fails — endpoint always returns 200 with fallback data
+- Scoring logic: base 50 → ±8 per trusted source stance → −25 suspicious domain → −20 partial fake claim match
+- Zod validation on both client and server
+- API errors always: `{ error: { code, message_th, message_en } }` — never raw stack traces
+- i18n: Thai default, English supported via next-intl
+
+**Architecture:**
+```
+Docker Compose
+├── app (Next.js, port 3000)
+│   ├── /api/analyze/text    POST — text & URL analysis
+│   ├── /api/analyze/image   POST — Gemini AI image analysis
+│   ├── /api/analyze/source  POST — domain risk analysis
+│   ├── /api/trending        GET  — trending queries
+│   └── /api/references/:id  GET  — reference list
+└── db (PostgreSQL 15, port 5432)
+    └── Tables: Analysis, Reference, TrustedSource,
+               KnownFakeClaim, SuspiciousDomain, TrendingEntry
+
+External: Google Gemini API (image analysis only)
+```
+
+**Screens:** Home (`/`) / Result (`/result/[id]`) / History (`/history`) / Trending (`/trending`)
+
+---
+
+## Slide Structure to Generate
+
+Create content for each slide below. For each slide, output:
+- **Slide title**
+- **Main content** (bullet points, diagram description, or short paragraphs)
+- **Speaker notes** (2–4 sentences the presenter says aloud, in Thai)
+
+### Slide 1 — Cover
+Title, tagline, team/date placeholder.
+
+### Slide 2 — Problem Statement
+Why fake news matters in Thailand. How fast misinformation spreads. The gap: no easy, privacy-first verification tool for everyday users.
+
+### Slide 3 — Solution Overview
+What ชัวร์ก่อนแชร์ does in one paragraph. Key promise: no login, no data collection, verify in seconds.
+
+### Slide 4 — Key Features (User-facing)
+Summarize FR.1–FR.7 as user-facing benefits, not technical requirements. Use icons/emojis per feature.
+
+### Slide 5 — Demo: Home Screen
+Layout: two-column. Left column: bullet-point description of the screen (hero banner, 3-tab input card, stats row, recent checks). Right column: a **mobile phone frame** (CSS-only, no image required) as a placeholder for a screenshot.
+
+Mobile frame HTML pattern to use on this slide and all demo slides:
+```html
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+    <!-- DROP SCREENSHOT HERE as <img src="..."> -->
+    <div class="screenshot-placeholder">
+      📱 วางภาพ screenshot ที่นี่
+    </div>
+  </div>
+</div>
+```
+Style the frame as a dark rounded rectangle (border-radius: 36px, border: 3px solid #4F9CF9, width: 260px, aspect-ratio: 9/19.5, background: #0D1B2A) with a small notch at top. The placeholder div should show centered muted text when no image is inserted. The `<img>` inside `.phone-screen` should fill the frame (width: 100%, height: 100%, object-fit: cover, border-radius: 28px).
+
+Describe the screen contents in the left column (text/bullets only — do not recreate the UI in HTML).
+
+### Slide 6 — Demo: Result Screen
+Same two-column layout with phone frame on the right (same `.phone-frame` pattern).
+Left column: describe the result page sections — verdict card (score circle + 5-segment bar), evidence stats (3 cards), reasoning accordion, reference list with stance badges, source analysis, action bar.
+
+### Slide 7 — Demo: Trending & History
+Split into two sub-slides (use Reveal.js vertical slides: nested `<section>` inside a parent `<section>`):
+- Sub-slide A: Trending page — phone frame on right, description on left (rank list, period selector, privacy notice)
+- Sub-slide B: History page — phone frame on right, description on left (filter bar, export/import JSON, empty state)
+
+### Slide 8 — Architecture Diagram
+Describe a clean architecture diagram showing: Browser → Next.js App (port 3000) ↔ PostgreSQL (port 5432), and Next.js App → Google Gemini API (external, image only). Emphasize Docker Compose wrapping both services.
+
+### Slide 9 — API Design
+Show the 5 API endpoints with method, path, and one-line purpose. Highlight the consistent error format `{ error: { code, message_th, message_en } }`. Mention Zod validation on every route. Show rate limit: 30 req/min per IP.
+
+### Slide 10 — Scoring Logic
+Explain the credibility scoring algorithm visually:
+- Start at 50 (neutral)
+- Known fake claim match → drop to 5
+- Each trusted source supporting → +8 (max 100)
+- Each trusted source opposing → −8 (min 0)
+- Suspicious domain → −25
+- Partial fake claim match (>80% similarity) → −20
+Map final score to one of 5 verdict levels.
+
+### Slide 11 — AI Image Analysis (Gemini Integration)
+How the image analysis flow works: upload → validate (size/type) → EXIF extraction → send to Gemini (gemini-2.5-flash) with structured JSON prompt → parse response → return aiProbability, detectedModel, Thai reasoning bullets. Graceful fallback if Gemini fails.
+
+### Slide 12 — Privacy by Design
+Four privacy decisions:
+1. localStorage only — history never leaves the browser
+2. SHA-256 query hashing — raw text not stored in trending
+3. Rate limiting uses IP for limiting only — never persisted
+4. No cookies, no sessions, no personal data on server
+Show the privacy banner: "🔒 ข้อมูลเก็บในเครื่องคุณเท่านั้น ไม่ส่งไป server"
+
+### Slide 13 — Tech Stack Summary
+Table: Layer → Technology → Why chosen.
+Rows: Framework, Language, Styling, ORM, Database, State, Data Fetching, Validation, i18n, AI, Testing.
+
+### Slide 14 — MVP Scope & Limitations
+What is real vs. mock in MVP:
+- Real: text/URL analysis, domain analysis, Gemini image AI detection, EXIF, trending, history
+- Mock: social account analysis, coordinated behavior (seeded demo), reverse image search
+- Out of scope: auth, production deploy, real-time updates, browser extension
+
+### Slide 15 — Testing Strategy
+Unit tests (Vitest): services (text/image/source analyzer), useLocalHistory hook, Zod schemas — minimum 5 tests each.
+E2E (Playwright): happy path — submit text → result page with verdict.
+Mock strategy: `vi.mock('../lib/prisma')` + `vi.mock('../lib/gemini')` in all service tests.
+
+### Slide 16 — Setup & Running
+Three commands to run the project:
+```
+docker compose up       # starts app + db
+npm run db:seed         # seed trusted sources, fake claims, suspicious domains
+npm test                # run Vitest unit tests
+```
+Mention .env.example: DATABASE_URL + GEMINI_API_KEY required.
+
+### Slide 17 — Future Roadmap (Post-MVP)
+Suggest 4–5 realistic next steps beyond MVP:
+- Real social account analysis API integration
+- Real reverse image search API
+- Browser extension
+- Public deployment with persistent user accounts (optional)
+- Community-contributed fact-check database
+
+### Slide 18 — Q&A / Closing
+Closing statement. Project name + tagline repeat. Contact/repo placeholder.
+
+---
+
+## Output Format
+
+Output a **single complete HTML file**. Requirements:
+
+### Structure
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <!-- Google Fonts: Kanit -->
+  <!-- Reveal.js CSS from CDN -->
+  <!-- Custom <style> block: Soft UI dark-blue theme, phone-frame styles -->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- SLIDE 1: Cover -->
+      <section> ... </section>
+
+      <!-- SLIDE 2: Problem Statement -->
+      <section> ... </section>
+
+      <!-- ...one <section> per slide, with HTML comment label... -->
+
+      <!-- SLIDE 7: Demo Trending & History (vertical) -->
+      <section>
+        <section> ... </section>  <!-- 7A Trending -->
+        <section> ... </section>  <!-- 7B History -->
+      </section>
+    </div>
+  </div>
+  <!-- Reveal.js JS from CDN -->
+  <!-- Reveal.initialize(...) script -->
+</body>
+</html>
+```
+
+### Editability rules
+- Every slide must start with an HTML comment: `<!-- SLIDE N: Title -->`
+- All slide text content (headings, bullets, speaker notes) must be plain inline text — **no JavaScript-generated content**
+- Speaker notes go inside `<aside class="notes">` at the bottom of each `<section>`, in Thai
+- Use `<ul>` / `<li>` for bullets, `<h2>` for slide title, `<p>` for body text
+- Do not minify or compress the output — keep it human-readable with consistent indentation
+
+### Content rules
+- Keep bullet point text concise (max 6 words per bullet where possible)
+- Speaker notes: 2–4 Thai sentences per slide
+- Do not invent features not listed in the Project Context above
+- Apply the Soft UI dark-blue theme and Kanit font to every element consistently

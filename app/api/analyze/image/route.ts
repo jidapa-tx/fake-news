@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { errorResponse } from '@/lib/errors';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { prisma } from '@/lib/prisma';
@@ -8,6 +9,7 @@ import { VerdictLevel } from '@/types';
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const CaptionSchema = z.string().max(1000).optional();
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
@@ -25,9 +27,16 @@ export async function POST(req: NextRequest) {
   if (file.size > MAX_SIZE) return errorResponse('FILE_TOO_LARGE');
   if (!ALLOWED_TYPES.includes(file.type)) return errorResponse('UNSUPPORTED_TYPE');
 
+  const captionRaw = formData.get('caption');
+  const captionParsed = CaptionSchema.safeParse(
+    captionRaw instanceof File ? undefined : captionRaw ?? undefined
+  );
+  if (!captionParsed.success) return errorResponse('VALIDATION_ERROR');
+  const caption = captionParsed.data;
+
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const result = await analyzeImage(buffer, file.type, file.name);
+    const result = await analyzeImage(buffer, file.type, file.name, caption);
     const queryHash = hashQuery(`image:${file.name}:${file.size}`);
 
     const analysis = await prisma.analysis.create({
